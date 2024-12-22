@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useGSAP } from "@gsap/react";
 import gsap from 'gsap'
 import LogBox from './LogBox';
-import "@fontsource/afacad-flux";
 
 function LogHome() {
 
