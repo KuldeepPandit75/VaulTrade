@@ -2,13 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@fontface {
-  font-family: "CoolveticaLight";
-  src: url("/Coolvetica Hv Comp.otf") format('otf');
-  font-weight:extralight;
-  font-style:normal;
-}
-
 *{
   padding:0;
   margin:0;
@@ -16,7 +9,7 @@
 
 body{
   background-color: #111;
-  font-family:"Coolvetica";
+  font-family: "Coolvetica", "Afacad Flux";
 }
 
 .sub span{
