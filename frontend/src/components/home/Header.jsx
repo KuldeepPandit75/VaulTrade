@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux';
 import LogoutButn from '../login/LogoutButn';
 import { useLocation } from 'react-router-dom';
 
 
-function Navbar({ setLogState, userData }) {
+function Header({ setLogState, userData }) {
 
     const location=useLocation();
     const [dropState,setDropState]=useState(false);
@@ -54,4 +53,4 @@ function Navbar({ setLogState, userData }) {
     )
 }
 
-export default Navbar
+export default Header

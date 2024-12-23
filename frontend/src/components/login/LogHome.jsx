@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useGSAP } from "@gsap/react";
 import gsap from 'gsap'
 import LogBox from './LogBox';
-import Navbar from '../home/Navbar';
+import Header from '../home/Header';
 
 function LogHome() {
 

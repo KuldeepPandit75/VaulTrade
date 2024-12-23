@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import LogoutButn from '../login/LogoutButn'
-import Navbar from './Navbar'
+import Header from './Header'
 
 function Home() {
 
