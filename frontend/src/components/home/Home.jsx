@@ -25,7 +25,7 @@ function Home() {
 
   return (
     <div className='px-5 pt-4'>
-      <Navbar userData={userData} />
+      <Header userData={userData} />
     </div>
   )
 }

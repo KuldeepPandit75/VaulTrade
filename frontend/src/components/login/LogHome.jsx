@@ -130,7 +130,7 @@ function LogHome() {
   return (
     <>
       <div className={`p-4 font-afacad overflow-hidden h-[100vh] filter ${logState ? 'brightness-50' : ""}`}>
-        <Navbar setLogState={setLogState} userData={userData} />
+        <Header setLogState={setLogState} userData={userData} />
         <div className='text-center relative'>
           <h2 className='quote text-[rgba(255,255,255,0.9)] text-6xl mt-[20vh] leading-[4.5rem] font-extrabold'>Laxmi Chit Fund,<br /> right here</h2>
           <h2 className='sub text-[#449682] mt-5 text-xl overflow-hidden font-semibold'>Built for scamming India.</h2>
