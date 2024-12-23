@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import LogoutButn from '../login/LogoutButn'
 import Header from './Header'
+import Navbar from './Navbar'
 
 function Home() {
 
@@ -24,8 +25,9 @@ function Home() {
 
 
   return (
-    <div className='px-5 pt-4'>
+    <div className=''>
       <Header userData={userData} />
+      <Navbar/>
     </div>
   )
 }

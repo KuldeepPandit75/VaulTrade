@@ -24,7 +24,7 @@ function Header({ setLogState, userData }) {
 
     return (
         <>
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center px-5 pt-4'>
                 <div className='flex items-center text-[1.5rem]'>
                     <img src='/Asset 1.svg' className='h-[40px] px-4 py-2 box-content' />
                     <h2 className='text-white ml-3 font-extrabold'>VaulTrade</h2>
