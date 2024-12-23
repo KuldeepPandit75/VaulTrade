@@ -16,6 +16,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@gsap/react": "^2.1.1",
     "@reduxjs/toolkit": "^2.5.0",
+    "axios": "^1.7.9",
     "coolvetica": "^1.0.0",
     "gapi-script": "^1.2.0",
     "gsap": "^3.12.5",

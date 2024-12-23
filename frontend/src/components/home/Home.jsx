@@ -1,16 +1,31 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import LogoutButn from '../login/LogoutButn'
 import Navbar from './Navbar'
 
 function Home() {
 
-  const userData=JSON.parse(sessionStorage.getItem("profileInfo"));
-  console.log(userData)
+  const [userData, setUserData] = useState(null)
+
+  useEffect(() => {
+
+    let data = null;
+    const storedData = sessionStorage.getItem("profileInfo");
+    if (storedData) {
+      try {
+        data = JSON.parse(storedData);
+      } catch (error) {
+        console.error("Invalid JSON data in sessionStorage:", error);
+        // Optionally remove invalid data
+        sessionStorage.removeItem("profileInfo");
+      }
+    }
+    setUserData(data);
+  }, [])
+
 
   return (
     <div className='px-5 pt-4'>
-      <Navbar userData={userData}/>
-      <LogoutButn/>
+      <Navbar userData={userData} />
     </div>
   )
 }

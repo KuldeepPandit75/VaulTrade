@@ -6,11 +6,22 @@ import Navbar from '../home/Navbar';
 
 function LogHome() {
 
-  const [logState,setLogState]=useState(false);
+  const [logState, setLogState] = useState(false);
 
-  const userData=JSON.parse(sessionStorage.getItem("profileInfo"));
+  let userData = null;
 
-  const handleLogBox=()=>{
+  const storedData = sessionStorage.getItem("profileInfo");
+  if (storedData) {
+    try {
+      userData = JSON.parse(storedData);
+    } catch (error) {
+      console.error("Invalid JSON data in sessionStorage:", error);
+      // Optionally remove invalid data
+      sessionStorage.removeItem("profileInfo");
+    }
+  }
+
+  const handleLogBox = () => {
     setLogState(true);
   }
 
@@ -32,9 +43,9 @@ function LogHome() {
       ease: 'power2.out'
     })
 
-    tl.from('.scamBtn',{
-      opacity:0,
-      scale:0,
+    tl.from('.scamBtn', {
+      opacity: 0,
+      scale: 0,
     })
 
     tl.from('.asset', {
@@ -80,22 +91,22 @@ function LogHome() {
 
     var clutter = ""
 
-    splitted.forEach((e,idx) => {
+    splitted.forEach((e, idx) => {
       clutter += `<span>${e}</span>`
-      if(e==" "){
-        clutter+=` `
+      if (e == " ") {
+        clutter += ` `
       }
     })
 
     subTitle.innerHTML = clutter
 
-    
-    gsap.from('.sub span',{
-      y:20,
-      opacity:0,
-      duration:0.5,
-      stagger:0.01,
-      delay:1.5
+
+    gsap.from('.sub span', {
+      y: 20,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.01,
+      delay: 1.5
     })
     const scamBtn = document.querySelector('.scamBtn');
 
@@ -114,21 +125,21 @@ function LogHome() {
         ease: "power1.out",
       });
     });
-  },[])
+  }, [])
 
   return (
     <>
-      <div className={`p-4 font-afacad overflow-hidden h-[100vh] filter ${logState?'brightness-50':""}`}>
-        <Navbar setLogState={setLogState} userData={userData}/>
+      <div className={`p-4 font-afacad overflow-hidden h-[100vh] filter ${logState ? 'brightness-50' : ""}`}>
+        <Navbar setLogState={setLogState} userData={userData} />
         <div className='text-center relative'>
           <h2 className='quote text-[rgba(255,255,255,0.9)] text-6xl mt-[20vh] leading-[4.5rem] font-extrabold'>Laxmi Chit Fund,<br /> right here</h2>
           <h2 className='sub text-[#449682] mt-5 text-xl overflow-hidden font-semibold'>Built for scamming India.</h2>
-          <button className='scamBtn text-white bg-[#449682] px-5 rounded-lg h-9 mr-6 hover:scale-[1.1] mt-5 font-semibold' onClick={()=>handleLogBox()}>Get Scammed</button>
+          <button className='scamBtn text-white bg-[#449682] px-5 rounded-lg h-9 hover:scale-[1.1] mt-5 font-semibold' onClick={() => handleLogBox()}>Get Scammed</button>
           <img src='/candle.svg' className='candle h-[15rem] absolute right-0 bottom-[-50vh]' />
           <img src='/Asset 2.svg' className='asset h-[15rem] absolute left-0 bottom-[-45vh]' />
         </div>
       </div>
-      {logState?<LogBox setLogState={setLogState}/>:<></>}
+      {logState ? <LogBox setLogState={setLogState} /> : <></>}
     </>
   )
 }
