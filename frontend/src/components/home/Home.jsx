@@ -19,7 +19,7 @@ function Home() {
 
 
   return (
-    <div className=''>
+    <div className='overflow-x-hidden'>
       <Header userData={userData} />
       <Navbar setTab={setTab} tab={tab}/>
       { tab=='Explore' ?

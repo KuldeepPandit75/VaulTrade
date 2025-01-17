@@ -5,9 +5,17 @@ const uri="https://groww.in"
 
 export const getStocks=async(req,res)=>{
     try {
-        const companies = [];
-    
-        await axios.get(`${uri}/stocks/filter?page=0&size=10&sortType=ASC`)
+        let companies = [];
+        let url=`${uri}/stocks/filter?page=0&size=${Math.floor(Math.random()*10)+50}&sortType=ASC`;
+        console.log(url);
+        
+        await axios.get(url,{
+            headers: {
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
+                Expires: '0',
+            },
+        })
         .then((response)=>{
             const htmlString = response.data;
             
@@ -65,4 +73,4 @@ export const getStocks=async(req,res)=>{
 
 
     
-}
+} 

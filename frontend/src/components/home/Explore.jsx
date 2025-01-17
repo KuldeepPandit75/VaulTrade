@@ -15,6 +15,7 @@ function Explore() {
         setStocks(false)
       }
     }
+    setInterval(fetchStocks,5000);
     fetchStocks();
 
   },[])
@@ -22,7 +23,6 @@ function Explore() {
     <div className='m-auto mt-10 flex flex-wrap justify-evenly'>
         {stocks?.map((stock,idx)=>(
           <StockCard key={idx} stock={stock}/>
-
         ))}
     </div>
   )
