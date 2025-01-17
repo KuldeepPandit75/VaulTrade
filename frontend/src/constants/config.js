@@ -29,4 +29,5 @@ export const API_NOTIFICATION_MESSAGES = {
 
 export const SERVICE_CALLS={
     getUserInfo: {url: "/userinfo", method:"POST"},
+    getStocks: {url:"/stocks",method:'POST'}
 }

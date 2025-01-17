@@ -98,7 +98,7 @@ for (const [key,value] of Object.entries(SERVICE_CALLS)){
             data: body,
             responseType: value.responseType,
             headers: {
-                Authorization: getAccessToken()
+                Authorization: getAccessToken(),
             },
             TYPE: getType(value,body),
             onUploadProgress: function(progressEvent){
