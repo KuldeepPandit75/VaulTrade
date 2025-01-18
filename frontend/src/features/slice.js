@@ -1,7 +1,11 @@
 import {createSlice} from "@reduxjs/toolkit"
 
 const initialState={
-    user:null
+    user:null,
+    stock:null,
+    stocks:null,
+    symbol:null,
+    stockPrices:null,
 }
 
 export const slice=createSlice({
@@ -10,10 +14,22 @@ export const slice=createSlice({
     reducers:{
         setUser(state,action){
             state.user=action.payload;
+        },
+        setStock(state,action){
+            state.stock=action.payload;
+        },
+        setUniStocks(state,action){
+            state.stocks=action.payload;
+        },
+        setSymbol(state,action){
+            state.symbol=action.payload;
+        },
+        setStockPrices(state,action){
+            state.stockPrices=action.payload;
         }
     }
 })
 
-export const {setUser} =slice.actions;
+export const {setUser,setStock,setUniStocks,setSymbol,setStockPrices} =slice.actions;
 
 export default slice.reducer

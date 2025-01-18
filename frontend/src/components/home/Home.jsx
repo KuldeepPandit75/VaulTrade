@@ -8,19 +8,11 @@ import Explore from './Explore'
 
 
 function Home() {
-
-  const [userData, setUserData] = useState(null);
-  const [tab,setTab]=useState('Explore')
-  const data=useSelector(state=>state.user);
-
-  useEffect(() => {
-    setUserData(data);
-  }, [data])
+  const [tab,setTab]=useState('Explore');
 
 
   return (
     <div className='overflow-x-hidden'>
-      <Header userData={userData} />
       <Navbar setTab={setTab} tab={tab}/>
       { tab=='Explore' ?
         <Explore/>: null

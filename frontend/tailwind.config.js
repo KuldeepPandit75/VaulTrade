@@ -10,7 +10,11 @@ export default {
     extend: {
       fontFamily:{
         coolvetica:["Coolvetica"],
-      }
+      },
+      colors: {
+        red: '#df484c', 
+        green: '#449682'
+      },
     },
   },
   plugins: [],

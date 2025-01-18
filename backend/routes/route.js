@@ -1,11 +1,14 @@
 import express from "express";
 import validateAccessToken from "../controller/auth-controller.js";
-import { getUserInfo } from "../controller/user-controller.js";
-import { getStocks } from "../controller/stock-controller.js";
+import { addMoney, createUser, getUserInfo } from "../controller/user-controller.js";
+import { getStockData, getStocks } from "../controller/stock-controller.js";
 
 const router=express.Router();
 
+router.post("/login",createUser);
+router.post("/addmoney",validateAccessToken,addMoney);
 router.post("/userinfo",validateAccessToken,getUserInfo);
-router.post("/stocks",getStocks);
+router.post("/stocks",validateAccessToken,getStocks);
+router.post("/stock",validateAccessToken,getStockData);
 
 export default router;

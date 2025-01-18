@@ -8,7 +8,7 @@ async function validateAccessToken(req,res,next) {
   try {
     const response = await axios.get(googleTokenInfoUrl);
     console.log("Token is valid:", response.data);
-    req.token=accessToken;
+    req.body.email=response.data.email;
     next();
   } catch (error) {
     console.error("Invalid Token:", error.message);

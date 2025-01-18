@@ -7,6 +7,9 @@ import Loader from './components/loader/Loader';
 import PrivateRoute from './PrivateRoute.jsx';
 import { useDispatch } from 'react-redux';
 import { setUser } from './features/slice.js';
+import Layout from './Layout.jsx';
+import Stock from './components/Stock/Stock.jsx';
+import Wallet from './components/home/Wallet.jsx';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -41,8 +44,10 @@ function App() {
     createRoutesFromElements(
       <>
         <Route path='/login' element={<LogHome/>}/>
-        <Route path='/'>
+        <Route path='/' element={<Layout/>}>
           <Route path='' element={<PrivateRoute><Home/></PrivateRoute>}/>
+          <Route path='stock' element={<PrivateRoute><Stock/></PrivateRoute>}/>
+          <Route path='wallet' element={<PrivateRoute><Wallet/></PrivateRoute>}/>
         </Route>
       </>
     )

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // To fetch user profile data
 import { setUser } from '../../features/slice';
 import Cookies from 'js-cookie';
+import { API } from '../../service/api';
 
 function LoginButn() {
   const dispatch = useDispatch();
@@ -24,16 +25,24 @@ function LoginButn() {
         );
 
         const userInfo = userInfoResponse.data;
-        console.log("User Info:", userInfo);
-
-        // Dispatch user info to Redux
-        dispatch(setUser(userInfo));
-
-        // Store user info in session storage (optional)
-        sessionStorage.setItem("user", JSON.stringify(userInfo));
-
-        // Navigate to home or dashboard
-        navigate("/");
+        const response= await API.login({data:userInfo});
+        console.log(response)
+        if(response.isSuccess){
+          
+          console.log("User Info:", response.data);
+          
+          
+          // Dispatch user info to Redux
+          dispatch(setUser(response.data));
+          
+          // Store user info in session storage (optional)
+          sessionStorage.setItem("user", JSON.stringify(response.data));
+          
+          // Navigate to home or dashboard
+          navigate("/");
+        }else{
+          alert("Error Logging In!")
+        }
       } catch (error) {
         console.error("Error fetching user info:", error);
       }

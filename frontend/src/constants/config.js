@@ -5,19 +5,19 @@ export const API_NOTIFICATION_MESSAGES = {
         title: "Loading...",
         message: "Data is being loaded, Please Wait."
     },
-    success:{
+    success: {
         title: "Success",
         message: "Data successfully loaded!"
     },
-    responseFailure:{
+    responseFailure: {
         title: "Error",
         message: "An error occured while fetching response from the server. Please try again"
     },
-    requestFailure:{
+    requestFailure: {
         titile: "Error",
         message: "An Error occured while parsing req data"
     },
-    networkError:{
+    networkError: {
         title: "Error",
         message: "Unable to connect with the server. Please check internet connectivity and try again later"
     }
@@ -27,7 +27,10 @@ export const API_NOTIFICATION_MESSAGES = {
 //SAMPLE REQUEST
 // NEED SERVICE CALL : { url: "/", method: "POST/GET/PUT/DELETE", params: true/false, query: true/false}
 
-export const SERVICE_CALLS={
-    getUserInfo: {url: "/userinfo", method:"POST"},
-    getStocks: {url:"/stocks",method:'POST'}
+export const SERVICE_CALLS = {
+    login: { url: "/login", method: 'POST' },
+    getUserInfo: { url: "/userinfo", method: "POST" },
+    getStocks: { url: "/stocks", method: 'POST' },
+    getStockData: { url: "/stock", method: 'POST' },
+    addMoney: { url: "/addmoney", method: 'POST' },
 }
