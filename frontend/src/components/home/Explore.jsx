@@ -15,7 +15,7 @@ function Explore() {
     navigate("/stock");
     console.log("stock opened");
 
-    fetch("http://127.0.0.1:5000/predictu", {
+    fetch(`${import.meta.env.VITE_BOT_URL}/predictu`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
