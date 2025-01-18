@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Header from '../home/Header'
 import { useSelector } from 'react-redux'
 import { API } from '../../service/api';
-import { TradingViewChart } from '../TradingView/TradingViewWidget.jsx'
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import axios from 'axios';
 import StockChart from './StockChart.jsx';
-import { setUser } from '../../features/slice.js';
 import { useNavigate } from 'react-router-dom';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 
 function Stock() {

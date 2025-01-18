@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { Chart } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStockPrices } from '../../features/slice.js';
+
+Chart.register(...registerables);
 
 const StockChart = ({ name }) => {
     const chartRef = useRef(null);
