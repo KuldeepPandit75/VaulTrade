@@ -1,8 +1,9 @@
 import axios from "axios";
 import { API_NOTIFICATION_MESSAGES, SERVICE_CALLS } from "../constants/config.js";
 import { getAccessToken, getType } from "../utils/common-utils.js";
+import "dotenv/config"
 
-const API_URL= "http://localhost:2020";
+const API_URL= process.env.BACKEND_URL;
 
 const axiosInstance = axios.create({
     baseURL: API_URL,

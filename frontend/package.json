@@ -20,6 +20,7 @@
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "coolvetica": "^1.0.0",
+    "dotenv": "^16.4.7",
     "gapi-script": "^1.2.0",
     "gsap": "^3.12.5",
     "js-cookie": "^3.0.5",

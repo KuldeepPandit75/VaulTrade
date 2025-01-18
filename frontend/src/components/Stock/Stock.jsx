@@ -15,7 +15,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 function Stock() {
     const [stock, setStock] = useState(null);
-    const [price, setPrice] = useState(1623);
+    const [price, setPrice] = useState(0);
     const [diff, setDiff] = useState("0.00 (0.00%)");
     const [tab, setTab] = useState("buy");
     const [qty, setQty] = useState(null);
