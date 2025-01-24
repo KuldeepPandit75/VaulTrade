@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { API } from '../../service/api';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../features/slice';
 
 function Wallet() {
@@ -10,6 +10,7 @@ function Wallet() {
     const [tab, setTab] = useState('add');
     const [amount, setAmount] = useState("");
     const dispatch = useDispatch();
+    let data=useSelector(state=>state.user)
 
     const handleTabClick = () => {
         if (tab == 'add') {
@@ -22,17 +23,19 @@ function Wallet() {
     const handleAmountIncrease = (e) => {
         if (e.target.innerText == "+100") {
             let newAmount = amount + 100;
-            setAmount(newAmount)
+            setAmount(Number(newAmount))
         } else {
             let newAmount = amount + 500;
-            setAmount(newAmount)
+            setAmount(Number(newAmount))
         }
     }
 
     useEffect(() => {
-        let storedData = JSON.parse(sessionStorage.getItem("user"));
-        setUserData(storedData);
-    }, [])
+        if(data){
+
+            setUserData(data);
+        }
+    }, [data])
 
     const handleAddMoney = async () => {
         const response = await API.addMoney({ addAmount: amount })
@@ -54,7 +57,7 @@ function Wallet() {
                 <div className='text-white flex-col flex border-[rgba(255,255,255,0.3)] border-[1px] rounded-xl w-1/2 h-[230px]'>
                     <div className='p-5'>
                         <p className='text-lg text-[rgba(255,255,255,0.5)]'>For Stocks, F&O</p>
-                        <h1 className='text-5xl'>₹{userData?.balance.$numberDecimal}</h1>
+                        <h1 className='text-5xl'>₹{parseFloat(userData?.balance.$numberDecimal).toFixed(2)}</h1>
                     </div>
                     <hr className='border-inherit border-t-[1px]' />
                     <div className='font-bold py-4 flex justify-between px-4 items-center'>

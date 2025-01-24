@@ -10,6 +10,7 @@ function Explore() {
   const [stocks, setStocks] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
   const openStock = async (stock) => {
     dispatch(setStock(stock.companyLink));
     navigate("/stock");
@@ -41,7 +42,7 @@ function Explore() {
         setStocks(false)
       }
     }
-    // setInterval(fetchStocks,4000);
+    setInterval(fetchStocks,4000);
     fetchStocks();
 
   }, [])

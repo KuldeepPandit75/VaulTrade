@@ -102,8 +102,7 @@ const StockChart = ({ name }) => {
                     console.error('Error fetching stock data:', error);
                 }
             };
-            fetchData();    
-            console.log("sadfa")
+            fetchData();
         }
         return () => {
             if (chartInstance.current) {

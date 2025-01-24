@@ -1,6 +1,8 @@
 import axios from "axios";
 import mongoose from "mongoose";
 import User from "../models/user.js";
+import Investment from "../models/investment.js";
+import Transaction from "../models/transaction.js";
 
 export const getUserInfo = async (req, res) => {
     
@@ -55,9 +57,56 @@ export const addMoney=async(req,res)=>{
         
         let stat=await User.findByIdAndUpdate(id,{balance:Number(user[0].balance)+Number(addAmount)},{new:true});
         console.log(stat);
+
+        const newTransaction=new Transaction({
+            email,
+            amount:addAmount,
+            dateTime: new Date(),
+            categ: "addMoney"
+        })
+
+        await newTransaction.save()
         
         return res.status(200).send(stat)
     // } catch (error) {
     //     return res.status(500).json({error})
     // }
+}
+
+export const buyStock=async(req,res)=>{
+    try {
+        const {email,stockName,buyPrice}=req.body;
+
+        const newInvestment= new Investment({
+            email,
+            buyPrice,
+            stockName,
+            dateTime: new Date()
+        })
+
+        const newTransaction=new Transaction({
+            email,
+            amount:buyPrice,
+            dateTime: new Date(),
+            categ: "stockBuy"
+        })
+
+        const user=await User.find({email});
+    
+        let id=user[0]._id
+
+        if(user[0].balance-buyPrice<0){
+            return res.status(404).json({message:"Insufficient Balance!"})
+        }
+
+        let stat=await User.findByIdAndUpdate(id,{balance: user[0].balance-buyPrice});
+
+        await newInvestment.save();
+        await newTransaction.save();
+
+        return res.status(200).send(stat);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message:error.message})
+    }
 }
