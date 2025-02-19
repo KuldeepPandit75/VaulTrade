@@ -5,6 +5,7 @@ import Navbar from './Navbar'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Explore from './Explore'
+import Dashboard from './Dashboard'
 
 
 function Home() {
@@ -15,7 +16,7 @@ function Home() {
     <div className='overflow-x-hidden'>
       <Navbar setTab={setTab} tab={tab}/>
       { tab=='Explore' ?
-        <Explore/>: null
+        <Explore/>: <Dashboard/>
       }
     </div>
   )

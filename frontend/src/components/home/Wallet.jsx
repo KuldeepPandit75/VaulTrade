@@ -68,13 +68,13 @@ function Wallet() {
 
                     <div className='font-bold py-4 cursor-pointer flex justify-between px-4 items-center'>
                         <p>All Transaction</p>
-                        <FontAwesomeIcon icon={faChevronRight} />
+                        <FontAwesomeIcon icon={faChevronRight} />   
                     </div>
                 </div>
                 <div className='w-1/4 border-[rgba(255,255,255,0.3)] border-[1px] rounded-xl flex flex-col h-[400px]'>
                     <div className='border-b-[1px] border-b-[rgba(255,255,255,0.3)] flex text-white mt-4 px-4'>
                         <p className={`${tab == 'add' ? "border-b-[3px] border-b-[#449682] text-green" : ""} text-sm font-semibold mx-0 px-4   cursor-pointer pb-2`} onClick={() => handleTabClick()}>Add Money</p>
-                        <p className={`${tab == 'add' ? "" : "border-b-[3px] border-b-[#449682] text-green"} text-sm font-semibold mx-2 px-4 cursor-pointer pb-2`} onClick={() => handleTabClick()}>Withdraw</p>
+                        {/* <p className={`${tab == 'add' ? "" : "border-b-[3px] border-b-[#449682] text-green"} text-sm font-semibold mx-2 px-4 cursor-pointer pb-2`} onClick={() => handleTabClick()}>Withdraw</p> */}
                     </div>
                     {tab == 'add' &&
                         <div className='relative flex flex-col justify-between flex-1 '>

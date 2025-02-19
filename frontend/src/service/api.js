@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_NOTIFICATION_MESSAGES, SERVICE_CALLS } from "../constants/config.js";
 import { getAccessToken, getType } from "../utils/common-utils.js";
 
-const API_URL= import.meta.env.VITE_BACKEND_URL;
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -10,28 +10,28 @@ const axiosInstance = axios.create({
 })
 
 axiosInstance.interceptors.request.use(
-    function(config){
+    function (config) {
         try {
-            if(config.TYPE.params){
-                config.url= config.url+"/"+config.TYPE.params;
-            }else if(config.TYPE.query){
-                config.params=config.TYPE.query;
+            if (config.TYPE.params) {
+                config.url = config.url + "/" + config.TYPE.params;
+            } else if (config.TYPE.query) {
+                config.params = config.TYPE.query;
             }
         } catch (error) {
             console.log(error.message)
         }
         return config;
     },
-    function(error){
+    function (error) {
         return Promise.reject(error);
     }
 )
 
 axiosInstance.interceptors.response.use(
-    function(response){
+    function (response) {
         return processResponse(response);
     },
-    function(error){
+    function (error) {
         return processError(error);
     }
 )
@@ -41,10 +41,10 @@ axiosInstance.interceptors.response.use(
 // If fail -> return {isFailure: true, status: string, msg: string, code: int}
 //////////////
 
-const processResponse=(response)=>{
-    if(response?.status===200|| response?.status===201){
-        return {isSuccess: true, data: response.data}
-    }else{
+const processResponse = (response) => {
+    if (response?.status === 200 || response?.status === 201) {
+        return { isSuccess: true, data: response.data }
+    } else {
         return {
             isFailure: true,
             status: response?.status,
@@ -59,27 +59,27 @@ const processResponse=(response)=>{
 // If success -> return {isSuccess: true, data: Object}
 // If fail -> return {isFailure: true, status: string, msg: string, code: int}
 //////////////
-const processError = (error)=>{
-    if(error.response){
+const processError = (error) => {
+    if (error.response) {
         //Request made and server responded with a status other
         //that falls out of the range 2.x.x
-        console.log("ERROR IN RESPONSE: ",error.toJSON())
+        console.log("ERROR IN RESPONSE: ", error.toJSON())
         return {
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.responseFailure,
             code: error.response.status
         }
-    }else if(error.request){
+    } else if (error.request) {
         //Request made but no response was received
-        console.log("ERROR IN REQUEST: ",error.toJSON())
+        console.log("ERROR IN REQUEST: ", error.toJSON())
         return {
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.requestFailure,
             code: ""
         }
-    }else{
+    } else {
         // something happened in setting up request that triggers an error
-        console.log("ERROR IN NETWORK: ",error.toJSON())
+        console.log("ERROR IN NETWORK: ", error.toJSON())
         return {
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.networkFailure,
@@ -88,10 +88,10 @@ const processError = (error)=>{
     }
 }
 
-const API ={};
+const API = {};
 
-for (const [key,value] of Object.entries(SERVICE_CALLS)){
-    API[key]=(body, showUploadProgress, showDownloadProgress)=>
+for (const [key, value] of Object.entries(SERVICE_CALLS)) {
+    API[key] = (body, showUploadProgress, showDownloadProgress) =>
         axiosInstance({
             method: value.method,
             url: value.url,
@@ -100,20 +100,20 @@ for (const [key,value] of Object.entries(SERVICE_CALLS)){
             headers: {
                 Authorization: getAccessToken(),
             },
-            TYPE: getType(value,body),
-            onUploadProgress: function(progressEvent){
-                if(showUploadProgress){
-                    let percentageCompleted= Math.round((progressEvent.loaded*100)/progressEvent.total)
+            TYPE: getType(value, body),
+            onUploadProgress: function (progressEvent) {
+                if (showUploadProgress) {
+                    let percentageCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
                     showUploadProgress(percentageCompleted);
                 }
             },
-            onDownloadProgress: function(progressEvent){
-                if(showDownloadProgress){
-                    let percentageCompleted= Math.round((progressEvent.loaded*100)/progressEvent.total)
+            onDownloadProgress: function (progressEvent) {
+                if (showDownloadProgress) {
+                    let percentageCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
                     showDownloadProgress(percentageCompleted);
                 }
             }
         })
 }
 
-export {API};
+export { API };

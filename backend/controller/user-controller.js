@@ -75,15 +75,18 @@ export const addMoney=async(req,res)=>{
 
 export const buyStock=async(req,res)=>{
     try {
-        const {email,stockName,buyPrice}=req.body;
+        const {email,stockName,buyPrice,stockQuantity}=req.body;
 
         const newInvestment= new Investment({
             email,
             buyPrice,
             stockName,
+            stockQuantity,
             dateTime: new Date()
         })
 
+        await newInvestment.save();
+        
         const newTransaction=new Transaction({
             email,
             amount:buyPrice,
@@ -101,12 +104,27 @@ export const buyStock=async(req,res)=>{
 
         let stat=await User.findByIdAndUpdate(id,{balance: user[0].balance-buyPrice});
 
-        await newInvestment.save();
         await newTransaction.save();
 
         return res.status(200).send(stat);
     } catch (error) {
         console.log(error);
         return res.status(500).json({message:error.message})
+    }
+}
+
+export const getUserInvestments=async(req,res)=>{
+    try {
+        const {email}=req.body
+
+        const investments= await Investment.find({email});
+        if(investments.length==0){
+            return res.status(404).json({message:"User have no Investments!"})
+        }
+        
+        return res.status(200).send(investments)
+
+    } catch (error) {
+        return res.status(500).json({msg: "Error while fetching investments of user."})
     }
 }

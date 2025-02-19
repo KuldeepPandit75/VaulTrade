@@ -88,7 +88,8 @@ function Stock() {
             const reqData={
                 buyPrice:price,
                 stockName: stock?.companyName,
-                email:userData.email
+                stockQuantity: qty,
+                email:userData.email,
             }
     
             const response=await API.buyStock(reqData)

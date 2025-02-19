@@ -9,6 +9,10 @@ const InvestmentSchema= new mongoose.Schema({
         type:String,
         required:true
     },
+    stockQuantity:{
+        type:Number,
+        required: true
+    },
     buyPrice:{
         type:mongoose.Schema.Types.Decimal128,
         required:true
