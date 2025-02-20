@@ -42,7 +42,7 @@ function Explore() {
         setStocks(false)
       }
     }
-    setInterval(fetchStocks,4000);
+    // setInterval(fetchStocks,4000);
     fetchStocks();
 
   }, [])

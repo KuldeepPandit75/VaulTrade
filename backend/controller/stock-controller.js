@@ -100,3 +100,28 @@ export const getStockData = async (req, res) => {
         return res.status(500).json({ msg: "error getting stocks data" })
     }
 }
+
+export const stockSearch=async(req,res)=>{
+    let {query}=req.body
+    try {
+        let url=`${uri}/search?q=${query}`
+
+        await axios.get(url,{
+            headers:{
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
+                Expires: '0',
+            }
+        }).then((response)=>{
+            const htmlString=response.data;
+
+            const $=cheerio.load(htmlString);
+            let info={};
+
+            
+        })
+
+    } catch (error) {
+        
+    }
+}

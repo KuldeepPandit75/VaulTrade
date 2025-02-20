@@ -9,6 +9,37 @@ function Dashboard() {
     const [currVal,setCurrVal]=useState(0);
     const stocks=useSelector(state=>state.stocks);
 
+    const stockTrend=(investment)=>{
+        for (let stock of stocks){
+            let mpInNum=parseFloat(stock.marketPrice.slice(1).replace(/,/g,""))
+            if(stock.name==investment.stockName){
+                if((mpInNum-investment.buyPrice.$numberDecimal)[0]=="-"){
+                    return "loss"
+                }
+                else{
+                    return 'profit'
+                }
+            }
+        }
+    }
+
+    const returnVal=(investment)=>{
+        for (let stock of stocks){
+            let mpInNum=parseFloat(stock.marketPrice.slice(1).replace(/,/g,""))
+            if(stock.name==investment.stockName){
+                return (((mpInNum-investment.buyPrice.$numberDecimal)*investment.stockQuantity).toFixed(2))
+            }
+        }
+    }
+
+    const returnPcent=(investment)=>{
+        for (let stock of stocks){
+            if(stock.name==investment.stockName){
+                return returnVal(investment)/(investment.buyPrice.$numberDecimal*investment.stockQuantity)
+            }
+        }
+    }
+
     useEffect(() => {
         const fetchInvestments = async () => {
             const response = await API.getUserInvestments();
@@ -40,7 +71,7 @@ function Dashboard() {
             setInvestedVal(calInvestedVal);
             setCurrVal(calCurrVal);
         }
-    }, [investments])
+    }, [investments,stocks])
 
     return (
         <>
@@ -60,7 +91,7 @@ function Dashboard() {
                                 <li>Total Returns</li>
                                 <li>1D Returns</li>
                             </ul> */}
-                            <table className='text-left w-[12rem]'>
+                            <table className='text-left w-[18rem]'>
                                 <tbody>
                                     <tr>
                                         <th>Invested Value</th>
@@ -68,7 +99,7 @@ function Dashboard() {
                                     </tr>
                                     <tr>
                                         <th>Total Returns</th>
-                                        <th className={investedVal<0?"text-red":"text-green"}>{investedVal-currVal}({(investedVal-currVal)/investedVal}%)</th>
+                                        <th className={currVal-investedVal<0?"text-red":"text-green"}>{(currVal-investedVal).toFixed(2)} ({((currVal-investedVal)/investedVal).toFixed(4)}%)</th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -79,6 +110,7 @@ function Dashboard() {
                             <thead className='border-b-[1px] border-dashed border-[rgba(255,255,255,0.3)] text-[rgba(255,255,255,0.4)]'>
                                 <tr className='h-10'>
                                     <th className='w-80'>Company</th>
+                                    <th>Market Price</th>
                                     <th>Returns(%)</th>
                                     <th>Current (Invested)</th>
                                 </tr>
@@ -90,8 +122,16 @@ function Dashboard() {
                                             {investment.stockName}
                                             <p className='text-sm text-[rgba(255,255,255,0.4)]'>{investment.stockQuantity} share</p>
                                         </th>
-                                        <th className={investedVal<0?"text-red":"text-green"}>{investedVal-currVal}({(investedVal-currVal)/investedVal}%)</th>
-                                        <th>{investment.buyPrice.$numberDecimal*investment.stockQuantity}</th>
+                                        <th>{stocks.map(stock=>{
+                                            if(stock.name==investment.stockName){
+                                                return stock.marketPrice
+                                            }
+                                        })}</th>
+                                        <th className={stockTrend(investment)=="loss"?"text-red":"text-green"}>
+                                            {returnVal(investment)} ({(returnPcent(investment)*100).toFixed(2)}%)
+                                        </th>
+                                        
+                                        <th>{((investment.buyPrice.$numberDecimal*investment.stockQuantity)+parseFloat(returnVal(investment))).toFixed(2)} ({investment.buyPrice.$numberDecimal*investment.stockQuantity})</th>
                                     </tr>
                                     
                                 ))}
