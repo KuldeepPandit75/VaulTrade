@@ -86,11 +86,6 @@ function Dashboard() {
                             </ul>
                         </div>
                         <div className="det text-white">
-                            {/* <ul>
-                                <li>Invested Value: ₹{investedVal}</li>
-                                <li>Total Returns</li>
-                                <li>1D Returns</li>
-                            </ul> */}
                             <table className='text-left w-[18rem]'>
                                 <tbody>
                                     <tr>

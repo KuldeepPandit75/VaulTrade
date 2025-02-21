@@ -14,11 +14,13 @@ function Stock() {
     const [qty, setQty] = useState(null);
     const [exceeding, setExceeding] = useState(false);
     const [userData, setUserData] = useState(null);
+    const [investments,setInvestments]=useState([]);
+    const [sellStockStatus,setSellStockStatus]=useState(null);
     const navigate = useNavigate();
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
     let data = useSelector(state => state.stock);
     let stockPrices = useSelector(state => state.stockPrices);
-    let stocksData=useSelector(state=>state.stocks)
+    let stocksData = useSelector(state => state.stocks)
 
     const handleTabClick = () => {
         if (tab == "buy") {
@@ -70,43 +72,64 @@ function Stock() {
         }
     }, [qty])
 
-    useEffect(()=>{
-        if(stocksData || data){
-            for (const ele of stocksData){
-                if(data==ele.companyLink){
+    useEffect(() => {
+        if (stocksData || data) {
+            for (const ele of stocksData) {
+                if (data == ele.companyLink) {
                     setPrice(Number(ele.marketPrice.slice(1).split(",").join("")))
                     setDiff(ele.priceChange)
                 }
             }
         }
-    },[stocksData])
+    }, [stocksData])
 
-    const handleBuyBtn= async()=>{
+    const handleBuyBtn = async () => {
 
-        if(qty!=0 && qty!=null){
-            
-            const reqData={
-                buyPrice:price,
+        if (qty != 0 && qty != null) {
+
+            const reqData = {
+                buyPrice: price,
                 stockName: stock?.companyName,
                 stockQuantity: qty,
-                email:userData.email,
+                email: userData.email,
             }
-    
-            const response=await API.buyStock(reqData)
-    
-            if(response.isSuccess){
+
+            const response = await API.buyStock(reqData)
+
+            if (response.isSuccess) {
                 alert("Invested Succesfully");
                 setQty(null);
                 dispatch(setUser(response.data))
-                sessionStorage.setItem("user",JSON.stringify(response.data));
-            }else{
+                sessionStorage.setItem("user", JSON.stringify(response.data));
+            } else {
                 alert("Investment Failed!");
             }
         }
 
     }
 
-    console.log(stock)
+    useEffect(() => {
+        const fetchInvestments = async () => {
+            const response = await API.getUserInvestments();
+            if (response.isSuccess) {
+                setInvestments(response.data);
+            } else {
+                setInvestments(false)
+            }
+        }
+        fetchInvestments();
+
+    }, [])
+
+    const checkInvest=(name)=>{
+        for (let investment of investments){
+            if(investment.stockName==name){
+                setSellStockStatus(`You have ${investment.stockQuantity} Shares to sell.`)    
+            }else{
+                setSellStockStatus("You have 0 Shares to sell.")
+            }
+        }
+    }
 
 
     return (
@@ -174,7 +197,7 @@ function Stock() {
                         <div className='border-inherit h-1/4 flex flex-col justify-evenly'>
                             <div className='border-inherit flex justify-between px-5 items-center'>
                                 <p>Qty <b>NSE</b></p>
-                                <input placeholder='' type='number' className='bg-transparent border-[1px] border-inherit no-spinner text-right rounded-[5px] leading-8 px-2' />
+                                <input placeholder='' type='number' className='bg-transparent border-[1px] border-inherit no-spinner text-right rounded-[5px] leading-8 px-2' onChange={()=>checkInvest(stock?.companyName)}/>
                             </div>
                             <div className='border-inherit flex justify-between px-5 items-center'>
                                 <p>Price</p>
@@ -182,7 +205,11 @@ function Stock() {
                             </div>
                         </div>
                         <div className='text-center h-1/3 flex flex-col justify-evenly items-center border-inherit'>
+                        {!sellStockStatus?
                             <p className='opacity-40 text-sm'>Order will be executed at {price} or higher price</p>
+                            :
+                            <p>{sellStockStatus}</p>
+                        }
                             <hr className='border-inherit border-[1px] w-full' />
                             <div className='flex justify-between w-full px-5'>
                                 <p className='opacity-40 text-sm'>Balance: ₹{userData?.balance.$numberDecimal}</p>
