@@ -128,7 +128,6 @@ function Dashboard() {
                                         
                                         <th>{((investment.buyPrice.$numberDecimal*investment.stockQuantity)+parseFloat(returnVal(investment))).toFixed(2)} ({investment.buyPrice.$numberDecimal*investment.stockQuantity})</th>
                                     </tr>
-                                    
                                 ))}
                             </tbody>
                         </table>
