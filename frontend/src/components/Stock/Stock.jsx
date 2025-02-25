@@ -212,7 +212,7 @@ function Stock() {
                         }
                             <hr className='border-inherit border-[1px] w-full' />
                             <div className='flex justify-between w-full px-5'>
-                                <p className='opacity-40 text-sm'>Balance: ₹{userData?.balance.$numberDecimal}</p>
+                                <p className='opacity-40 text-sm'>Balance: ₹{parseFloat(userData?.balance.$numberDecimal).toFixed(2)}</p>
                                 <p className='opacity-40 text-sm'></p>
                             </div>
                             <button className='bg-red w-[80%] scale-[0.99] rounded-lg h-[40px] text-xl font-bold hover:bg-[#ff484c] hover:scale-[1] transition-all'>Sell</button>
