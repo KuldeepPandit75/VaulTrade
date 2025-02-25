@@ -106,7 +106,7 @@ function Dashboard() {
                                 <tr className='h-10'>
                                     <th className='w-80'>Company</th>
                                     <th>Market Price</th>
-                                    <th>Returns(%)</th>
+                                    <th>Returns (%)</th>
                                     <th>Current (Invested)</th>
                                 </tr>
                             </thead>
