@@ -7,8 +7,8 @@ import { setUser } from '../../features/slice.js';
 
 function StockDet({ price, stock}) {
     const [tab, setTab] = useState("buy");
-    const [qty, setQty] = useState(null);
-    const [sellQty, setSellQty] = useState(null);
+    const [qty, setQty] = useState("");
+    const [sellQty, setSellQty] = useState("");
     const [exceeding, setExceeding] = useState(false);
     const [userData, setUserData] = useState(null);
     const [investments, setInvestments] = useState([]);
@@ -28,10 +28,16 @@ function StockDet({ price, stock}) {
         }
     }
 
+    useEffect(()=>{
+        setSellQty("")
+        setSellStockStatus(null);
+    },[stock])
+
     const checkInvest = (name) => {
         for (let investment of investments) {
             if (investment.stockName == name) {
-                setSellStockStatus(`You have ${investment.stockQuantity} Shares to sell.`)
+                setSellStockStatus(`You have ${investment.stockQuantity} Shares to sell.`);
+                break;
             } else {
                 setSellStockStatus("You have 0 Shares to sell.")
             }
@@ -85,7 +91,7 @@ function StockDet({ price, stock}) {
 
     const handleSellBtn = async () => {
         for (let investment of investments) {
-            if (investment.stockName == stock?.companyName) {
+            if (investment.stockName == stock?.companyName && investment.email==userData.email) {
                 if (investment.stockQuantity < sellQty) {
                     alert(`Insufficient Stock`)
                 }
@@ -108,6 +114,7 @@ function StockDet({ price, stock}) {
                 } else {
                     console.log(response)
                 }
+                break;
             }
         }
 

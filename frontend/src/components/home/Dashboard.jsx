@@ -68,9 +68,7 @@ function Dashboard() {
                 calInvestedVal += parseFloat(investment.buyPrice.$numberDecimal * investment.stockQuantity)
                 stocks.map(stock => {
                     if (stock.name == investment.stockName) {
-                        console.log(stock.marketPrice.slice(1))
                         let demoVal = parseFloat(stock.marketPrice.slice(1).replace(/,/g, "")) * investment.stockQuantity;
-                        console.log(investment.stockName, " ", demoVal)
                         calCurrVal += demoVal
                     }
                 })

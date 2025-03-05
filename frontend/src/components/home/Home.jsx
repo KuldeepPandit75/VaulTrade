@@ -13,12 +13,14 @@ function Home() {
 
 
   return (
-    <div className='overflow-x-hidden'>
+    <>
       <Navbar setTab={setTab} tab={tab}/>
+    <div className='overflow-x-hidden'>
       { tab=='Explore' ?
         <Explore/>: <Dashboard/>
       }
     </div>
+    </>
   )
 }
 

@@ -77,36 +77,56 @@ export const buyStock=async(req,res)=>{
     try {
         const {email,stockName,buyPrice,stockQuantity}=req.body;
 
-        const newInvestment= new Investment({
-            email,
-            buyPrice,
-            stockName,
-            stockQuantity,
-            dateTime: new Date()
-        })
+        const exists=await Investment.findOne({email,stockName});
 
-        await newInvestment.save();
-        
-        const newTransaction=new Transaction({
-            email,
-            amount:buyPrice,
-            dateTime: new Date(),
-            categ: "stockBuy"
-        })
+        if(exists){
+            const user=await User.find({email});
+            
+            await Investment.findOneAndUpdate({email,stockName},{stockQuantity: exists.stockQuantity+stockQuantity})
 
-        const user=await User.find({email});
+            let id=user[0]._id
     
-        let id=user[0]._id
+            if(user[0].balance-buyPrice*stockQuantity<0){
+                return res.status(404).json({message:"Insufficient Balance!"})
+            }
+    
+            let stat=await User.findByIdAndUpdate(id,{balance: user[0].balance-buyPrice*stockQuantity});
 
-        if(user[0].balance-buyPrice<0){
-            return res.status(404).json({message:"Insufficient Balance!"})
+            res.status(200).send(stat);
+        }else{
+            const newInvestment= new Investment({
+                email,
+                buyPrice,
+                stockName,
+                stockQuantity,
+                dateTime: new Date()
+            })
+    
+            await newInvestment.save();
+            
+            const newTransaction=new Transaction({
+                email,
+                amount:buyPrice,
+                dateTime: new Date(),
+                categ: "stockBuy"
+            })
+    
+            const user=await User.find({email});
+        
+            let id=user[0]._id
+    
+            if(user[0].balance-buyPrice*stockQuantity<0){
+                return res.status(404).json({message:"Insufficient Balance!"})
+            }
+    
+            let stat=await User.findByIdAndUpdate(id,{balance: user[0].balance-buyPrice*stockQuantity});
+    
+            await newTransaction.save();
+    
+            return res.status(200).send(stat);
+            
         }
 
-        let stat=await User.findByIdAndUpdate(id,{balance: user[0].balance-buyPrice});
-
-        await newTransaction.save();
-
-        return res.status(200).send(stat);
     } catch (error) {
         console.log(error);
         return res.status(500).json({message:error.message})
