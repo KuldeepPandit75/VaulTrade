@@ -67,6 +67,7 @@ const processError = (error) => {
         return {
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.responseFailure,
+            apiMsg: error.response.data,
             code: error.response.status
         }
     } else if (error.request) {

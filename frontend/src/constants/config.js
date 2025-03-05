@@ -34,5 +34,6 @@ export const SERVICE_CALLS = {
     getStockData: { url: "/stock", method: 'POST' },
     addMoney: { url: "/addmoney", method: 'POST' },
     buyStock: { url: "/buyStock", method: 'POST' },
-    getUserInvestments: {url:"/getUserInvestments",method:'POST'}
+    getUserInvestments: {url:"/getUserInvestments",method:'POST'},
+    sellStock: {url: "/sellStock", method: 'POST'}
 }

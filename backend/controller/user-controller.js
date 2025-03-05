@@ -113,6 +113,32 @@ export const buyStock=async(req,res)=>{
     }
 }
 
+export const sellStock=async(req,res)=>{
+    try {
+        const {email,sellQty,stockName,sellPrice}=req.body;
+        const sellingAmount=sellQty*sellPrice;
+
+        const client= await User.findOne({email});
+
+        const sellingStock= await Investment.findOne({stockName,email});
+        
+        if(sellQty>sellingStock.stockQuantity){
+            return res.status(400).json({msg:"Insufficient Stocks to Sell"});
+        }else if(sellQty==sellingStock.stockQuantity){
+            let stat=await User.findByIdAndUpdate(client._id,{balance: Number(client.balance)+sellingAmount});
+            await Investment.findOneAndDelete({stockName,email});
+            return res.status(200).send(stat);
+        }else{
+            let stat=await User.findByIdAndUpdate(client._id,{balance: Number(client.balance)+sellingAmount});
+            await Investment.findOneAndUpdate({stockName,email},{stockQuantity: sellingStock.stockQuantity-sellQty});
+            return res.status(200).send(stat);
+        }
+
+    } catch (error) {
+        return res.status(500).json({msg:error.message});
+    }
+}
+
 export const getUserInvestments=async(req,res)=>{
     try {
         const {email}=req.body

@@ -12,7 +12,11 @@ function Explore() {
   const dispatch = useDispatch();
   
   const openStock = async (stock) => {
-    dispatch(setStock(stock.companyLink));
+    dispatch(setStock({
+      link: stock.companyLink,
+      name: stock.name
+
+    }));
     navigate("/stock");
     console.log("stock opened");
 
