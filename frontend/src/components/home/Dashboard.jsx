@@ -3,6 +3,7 @@ import { API } from '../../service/api'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import StockDet from '../Stock/StockDet';
+import { setStock } from '../../features/slice';
 
 
 function Dashboard() {
@@ -87,9 +88,13 @@ function Dashboard() {
 
     const handleStockClick=(selectStock)=>{
         let matchStock;
+        
         for (let stock of stocks){
             if(stock.name==selectStock.stockName){
-                // stock.companyName=stock.name;
+                dispatch(setStock({
+                      link: stock.companyLink,
+                      name: stock.name
+                    }))
                 matchStock={...stock,companyName:stock.name};
             }
         }

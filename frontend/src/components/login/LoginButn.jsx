@@ -42,6 +42,7 @@ function LoginButn() {
           navigate("/");
         }else{
           alert("Error Logging In!")
+          dispatch(setUser(false))
         }
       } catch (error) {
         console.error("Error fetching user info:", error);

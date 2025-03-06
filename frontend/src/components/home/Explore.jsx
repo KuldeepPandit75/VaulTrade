@@ -4,13 +4,19 @@ import { API } from '../../service/api.js'
 import { useDispatch } from 'react-redux';
 import { setStock, setSymbol, setUniStocks } from '../../features/slice.js'
 import { Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import gsap from 'gsap';
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
 
 function Explore() {
+
+  gsap.registerPlugin(ScrollTrigger)
+
   const [stocks, setStocks] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   const openStock = async (stock) => {
     dispatch(setStock({
       link: stock.companyLink,
@@ -25,7 +31,7 @@ function Explore() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: `${stock.name}`}),
+      body: JSON.stringify({ message: `${stock.name}` }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -50,13 +56,35 @@ function Explore() {
     fetchStocks();
 
   }, [])
+
+  useGSAP(() => {
+    gsap.utils.toArray(".stockCard").forEach((card) => {
+      gsap.fromTo(
+        card,
+        { opacity: 0, scale: 0.8 }, // Initial state (before scrolling)
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 95%", // Animation starts when the card enters viewport
+            toggleActions: "play none none reverse", // Plays only once
+          },
+        }
+      );
+    });
+  }, [stocks]);
+
   return (
     <div className='m-auto mt-10 flex flex-wrap justify-evenly'>
-      {stocks?.map((stock, idx) => (
-        <div onClick={() => openStock(stock)} key={idx}>
-          <StockCard stock={stock} />
-        </div>
-      ))}
+      {stocks &&
+        stocks.map((stock, idx) => (
+          <div onClick={() => openStock(stock)} key={idx}>
+            <StockCard stock={stock} />
+          </div>
+        ))}
     </div>
   )
 }

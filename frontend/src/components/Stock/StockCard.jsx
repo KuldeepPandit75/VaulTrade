@@ -14,7 +14,7 @@ function StockCard({ stock }) {
   },[])
   return (
     <>
-      <div className='bg-[#1b1b1b] border-[1px] border-opacity-30 border-gray-100 h-[6rem] w-[16rem] rounded-lg m-5 p-3 flex flex-col justify-between hover:scale-[1.05] transition-all]'>
+      <div className='stockCard bg-[#1b1b1b] border-[1px] border-opacity-30 border-gray-100 h-[6rem] w-[16rem] rounded-lg m-5 p-3 flex flex-col justify-between hover:scale-[1.05]'>
         <p className='text-white font-bold text-[1.1rem]'>{stock.name}</p>
         <div className='flex justify-between'>
 

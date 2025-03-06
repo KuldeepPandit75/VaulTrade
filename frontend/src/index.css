@@ -46,3 +46,15 @@ body{
   border-radius: 100vw;
   border: solid #111 8px;
 }
+
+.circle{
+  height:24px;
+  width:24px;
+  border-radius:24px;
+  background-color: #449682;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:1000000;
+  pointer-events:none;
+}

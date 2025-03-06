@@ -16,7 +16,7 @@ function StockDet({ price, stock}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [diff, setDiff] = useState("0.00 (0.00%)");
-
+    let data = useSelector(state => state.stock);
     let stocksData = useSelector(state => state.stocks);
 
 
@@ -132,6 +132,16 @@ function StockDet({ price, stock}) {
         fetchInvestments();
 
     }, [])
+
+    useEffect(() => {
+        if (stocksData && data) {
+            for (const ele of stocksData) {
+                if (data.link == ele.companyLink) {
+                    setDiff(ele.priceChange)
+                }
+            }
+        }
+    }, [stocksData])
 
     return (
         <>
