@@ -56,15 +56,15 @@ function Header({ setLogState, userData = null }) {
     useGSAP(()=>{
         const tl=gsap.timeline();
 
-        tl.fromTo('.logo,.search,.walletIcon,.loginBtn,.dp',{
+        tl.fromTo('.logo,.walletIcon,.loginBtn,.dp',{
             y:-20,
             opacity:0,
         },{
             y:0,
             opacity:100,
-            stagger:0.2,
+            stagger:0.4,
         })
-    },[])
+    },[userData])
 
     return (
         <>
@@ -73,11 +73,11 @@ function Header({ setLogState, userData = null }) {
                     <img src='/Asset 1.svg' className='h-[40px] px-4 py-2 box-content' />
                     <h2 className='text-white ml-3 font-extrabold'>VaulTrade</h2>
                 </div>
-                <div className='search absolute left-1/2 -translate-x-1/2'>
+                <div className='absolute left-1/2 -translate-x-1/2'>
                     <input
                         type='text'
                         placeholder='Search'
-                        className={`text-[rgba(255,255,255,0.5)] rounded-lg border-none px-4 py-1 pr-10 w-[25vw] bg-[#333]  font-semibold`}
+                        className={`search text-[rgba(255,255,255,0.5)] rounded-lg border-none px-4 py-1 pr-10 w-[25vw] bg-[#333] focus:outline-none focus:w-[30vw] transition-all font-semibold`}
                         value={search}
                         onChange={(e) => handleSearch(e)}
                         onFocus={() => setFocus(true)}
