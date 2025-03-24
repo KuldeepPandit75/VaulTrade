@@ -21,7 +21,7 @@ function Dashboard() {
         for (let stock of stocks) {
             let mpInNum = parseFloat(stock.marketPrice.slice(1).replace(/,/g, ""))
             if (stock.name == investment.stockName) {
-                if ((mpInNum - investment.buyPrice.$numberDecimal)[0] == "-") {
+                if ((mpInNum - investment.buyPrice.$numberDecimal).toString()[0] == "-") {
                     return "loss"
                 }
                 else {

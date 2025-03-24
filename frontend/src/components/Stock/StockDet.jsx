@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { API } from '../../service/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../../features/slice.js';
+import { setNotification, setUser } from '../../features/slice.js';
 
 
 function StockDet({ price, stock}) {
@@ -13,6 +13,8 @@ function StockDet({ price, stock}) {
     const [userData, setUserData] = useState(null);
     const [investments, setInvestments] = useState([]);
     const [sellStockStatus, setSellStockStatus] = useState(null);
+    const [noti,setNoti]=useState(null);
+    const [notiType,setNotiType]=useState(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [diff, setDiff] = useState("0.00 (0.00%)");
@@ -32,6 +34,10 @@ function StockDet({ price, stock}) {
         setSellQty("")
         setSellStockStatus(null);
     },[stock])
+
+    useEffect(()=>{
+        dispatch(setNotification({noti,notiType}))
+    },[noti])
 
     const checkInvest = (name) => {
         for (let investment of investments) {
@@ -78,12 +84,14 @@ function StockDet({ price, stock}) {
             const response = await API.buyStock(reqData)
 
             if (response.isSuccess) {
-                alert("Invested Succesfully");
+                setNoti("Invested Succesfully");
+                setNotiType("Success")
                 setQty(null);
                 dispatch(setUser(response.data))
                 sessionStorage.setItem("user", JSON.stringify(response.data));
             } else {
-                alert("Investment Failed!");
+                setNoti("Investment Failed!");
+                setNotiType("Failed")
             }
         }
 
@@ -93,7 +101,8 @@ function StockDet({ price, stock}) {
         for (let investment of investments) {
             if (investment.stockName == stock?.companyName && investment.email==userData.email) {
                 if (investment.stockQuantity < sellQty) {
-                    alert(`Insufficient Stock`)
+                    setNoti(`Insufficient Stock`)
+                    setNotiType("Warning")
                 }
             } else {
                 const reqData = {
@@ -106,7 +115,8 @@ function StockDet({ price, stock}) {
                 const response = await API.sellStock(reqData);
 
                 if (response.isSuccess) {
-                    alert('Sold Succesfully');
+                    setNoti('Sold Succesfully');
+                    setNotiType("Success")
                     setSellQty(null);
                     dispatch(setUser(response.data));
                     sessionStorage.setItem("user", JSON.stringify(response.data));

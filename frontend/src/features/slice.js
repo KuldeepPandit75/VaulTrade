@@ -6,6 +6,7 @@ const initialState={
     stocks:null,
     symbol:null,
     stockPrices:null,
+    notifications:[],
 }
 
 export const slice=createSlice({
@@ -26,10 +27,13 @@ export const slice=createSlice({
         },
         setStockPrices(state,action){
             state.stockPrices=action.payload;
+        },
+        setNotification(state,action){
+            state.notifications.push(action.payload);
         }
     }
 })
 
-export const {setUser,setStock,setUniStocks,setSymbol,setStockPrices} =slice.actions;
+export const {setUser,setStock,setUniStocks,setSymbol,setStockPrices, setNotification} =slice.actions;
 
 export default slice.reducer
