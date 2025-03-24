@@ -36,7 +36,10 @@ function StockDet({ price, stock}) {
     },[stock])
 
     useEffect(()=>{
-        dispatch(setNotification({noti,notiType}))
+        if(noti && notiType){
+            dispatch(setNotification({noti,notiType}))
+
+        }
     },[noti])
 
     const checkInvest = (name) => {
