@@ -17,6 +17,8 @@ function Dashboard() {
 
     let data = useSelector(state => state.user)
 
+    console.log(data)
+
     const stockTrend = (investment) => {
         for (let stock of stocks) {
             let mpInNum = parseFloat(stock.marketPrice.slice(1).replace(/,/g, ""))
@@ -59,7 +61,7 @@ function Dashboard() {
         }
         fetchInvestments();
 
-    }, [])
+    }, [userData])
 
     useEffect(() => {
         if (investments && investments.length != 0 && stocks) {

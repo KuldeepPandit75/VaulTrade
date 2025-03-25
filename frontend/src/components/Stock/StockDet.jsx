@@ -10,7 +10,6 @@ function StockDet({ price, stock}) {
     const [qty, setQty] = useState("");
     const [sellQty, setSellQty] = useState("");
     const [exceeding, setExceeding] = useState(false);
-    const [userData, setUserData] = useState(null);
     const [investments, setInvestments] = useState([]);
     const [sellStockStatus, setSellStockStatus] = useState(null);
     const [noti,setNoti]=useState(null);
@@ -19,6 +18,7 @@ function StockDet({ price, stock}) {
     const dispatch = useDispatch();
     const [diff, setDiff] = useState("0.00 (0.00%)");
     let data = useSelector(state => state.stock);
+    const userData=useSelector(state=>state.user)
     let stocksData = useSelector(state => state.stocks);
 
 
@@ -54,10 +54,10 @@ function StockDet({ price, stock}) {
     }
 
 
-    useEffect(() => {
-        let storedData = JSON.parse(sessionStorage.getItem("user"));
-        setUserData(storedData);
-    }, [])
+    // useEffect(() => {
+    //     let storedData = JSON.parse(sessionStorage.getItem("user"));
+    //     setUserData(storedData);
+    // }, [refresh])
 
     const handleQty = (e) => {
         setQty(Number(e.target.value))
@@ -127,6 +127,7 @@ function StockDet({ price, stock}) {
                 } else {
                     console.log(response)
                 }
+                // setRefresh(prev=>!prev)
                 break;
             }
         }
@@ -144,7 +145,7 @@ function StockDet({ price, stock}) {
         }
         fetchInvestments();
 
-    }, [])
+    }, [userData])
 
     useEffect(() => {
         if (stocksData && data) {
