@@ -23,6 +23,7 @@ function Stock() {
             const response = await API.getStockData({ link: data.link });
             if (response.isSuccess) {
                 response.data.companyName=data.name;
+                console.log(response.data)
                 setStock(response.data);
             } else {
                 console.log(response.data);
@@ -46,6 +47,7 @@ function Stock() {
     
 
     useEffect(() => {
+        console.log(data)
         if (stocksData || data) {
             for (const ele of stocksData) {
                 if (data.link == ele.companyLink) {

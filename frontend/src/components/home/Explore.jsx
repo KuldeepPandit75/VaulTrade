@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import StockCard from '../Stock/StockCard'
 import { API } from '../../service/api.js'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setStock, setSymbol, setUniStocks } from '../../features/slice.js'
 import { Navigate, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
@@ -16,6 +16,13 @@ function Explore() {
   const [stocks, setStocks] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const stocksData=useSelector(state=>state.stocks)
+
+  useEffect(()=>{
+    if(stocksData){
+      setStocks(stocksData)
+    }
+  },[stocksData])
 
   const openStock = async (stock) => {
     dispatch(setStock({
@@ -41,21 +48,7 @@ function Explore() {
 
   };
 
-  useEffect(() => {
-    const fetchStocks = async () => {
-      const response = await API.getStocks();
-      if (response.isSuccess) {
-
-        setStocks(response.data);
-        dispatch(setUniStocks(response.data));
-      } else {
-        setStocks(false)
-      }
-    }
-    // setInterval(fetchStocks,4000);
-    fetchStocks();
-
-  }, [])
+  
 
   useGSAP(() => {
     gsap.utils.toArray(".stockCard").forEach((card) => {
@@ -80,7 +73,7 @@ function Explore() {
   return (
     <div className='m-auto mt-10 flex flex-wrap justify-evenly'>
       {stocks &&
-        stocks.map((stock, idx) => (
+        stocks.slice(0,50).map((stock, idx) => (
           <div onClick={() => openStock(stock)} key={idx}>
             <StockCard stock={stock} />
           </div>

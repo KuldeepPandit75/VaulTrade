@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import LogoutButn from '../login/LogoutButn';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { setStock, setSymbol } from '../../features/slice';
+import { useDispatch, useSelector } from 'react-redux';
+import levenshtein from 'fast-levenshtein';
 
 
 function Header({ setLogState, userData = null }) {
@@ -13,6 +15,8 @@ function Header({ setLogState, userData = null }) {
     const [stocks, setStocks] = useState();
     const [search, setSearch] = useState("");
     const [focus, setFocus] = useState(false);
+    const stocksData=useSelector(state=> state.stocks)
+    const dispatch=useDispatch();
     const navigate = useNavigate();
 
     const handleLogBox = () => {
@@ -33,15 +37,17 @@ function Header({ setLogState, userData = null }) {
         }
     }
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = async(e) => {
         if (e.key == "Enter") {
-            let URI = `https://api.polygon.io/v3/reference/tickers?${search.length == 0 ? "" : (search.length < 3 ? `ticker=${search.toUpperCase()}&` : `search=${search}&`)}market=stocks&active=true&limit=100&apiKey=4h3QWPlH6G_BBEMqOADOBA03UiQS9r68`
-            axios.get(URI)
-                .then((res) => {
-                    setStocks(res.data.results)
-                    console.log(res.data.results)
-                })
-            console.log(URI)
+            let results = stocksData.map(stock => ({
+                name: stock.name,
+                companyLink: stock.companyLink,
+                distance: levenshtein.get(search.toLowerCase(), stock.name.toLowerCase())
+            }));
+    
+            results.sort((a, b) => a.distance - b.distance);
+    
+            setStocks(results.slice(0,5))
         }
     }
 
@@ -53,22 +59,46 @@ function Header({ setLogState, userData = null }) {
         navigate("/wallet")
     }
 
-    useGSAP(()=>{
-        const tl=gsap.timeline();
+    useGSAP(() => {
+        const tl = gsap.timeline();
 
-        tl.fromTo('.logo,.walletIcon,.loginBtn,.dp',{
-            y:-20,
-            opacity:0,
-        },{
-            y:0,
-            opacity:100,
-            stagger:0.4,
+        tl.fromTo('.logo,.walletIcon,.loginBtn,.dp', {
+            y: -20,
+            opacity: 0,
+        }, {
+            y: 0,
+            opacity: 100,
+            stagger: 0.4,
         })
-    },[userData])
+    }, [])
+
+    const openStock = async (stock) => {
+        dispatch(setStock({
+          link: stock.companyLink,
+          name: stock.name
+    
+        }));
+        navigate("/stock");
+        console.log("stock opened");
+    
+        fetch(`${import.meta.env.VITE_BOT_URL}/predictu`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: `${stock.name}` }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            dispatch(setSymbol(data.answer.trim()))
+          })
+          .catch((error) => console.error("Error:", error));
+    
+      };
 
     return (
         <>
-            <div className={`flex justify-between items-center px-24 pt-4 sticky top-0 ${location.pathname=="/"?"bg-[#111]":""}  z-[10000]`}>
+            <div className={`flex justify-between items-center px-24 pt-4 sticky top-0 ${location.pathname == "/" ? "bg-[#111]" : ""}  z-[10000]`}>
                 <div className='logo flex items-center text-[1.5rem] cursor-pointer' onClick={goHome}>
                     <img src='/Asset 1.svg' className='h-[40px] px-4 py-2 box-content' />
                     <h2 className='text-white ml-3 font-extrabold'>VaulTrade</h2>
@@ -90,16 +120,14 @@ function Header({ setLogState, userData = null }) {
                     />
                     <span style={{ fontFamily: "FontAwesome" }} className='ml-[-30px] text-[rgba(255,255,255,0.5)]'>&#xf002;</span>
                 </div>
-                {stocks  &&
+                {stocks &&
 
                     <div className={`absolute top-[70px] bg-[#121212] z-10 rounded-lg w-[30vw] left-[50.5%] -translate-x-1/2 border-[1px] border-opacity-50 border-[#d1d1d1]  ${focus ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible"}transition-all duration-200`}>
                         {stocks.slice(0, 5).map((stock, idx) => (
-                            <Link to={`/${idx}`} key={idx}>
-                                <div className='px-3 py-2 hover:bg-[#1b1b1b] overflow-hidden cursor-pointer rounded-lg text-[#d1d1d1]' key={idx}>
+                                <div key={idx} className='px-3 py-2 hover:bg-[#1b1b1b] overflow-hidden cursor-pointer rounded-lg text-[#d1d1d1]' onClick={()=>openStock(stock)}>
                                     <h3 className='font-extrabold'>{stock.name}</h3>
-                                    <p>{stock.ticker}</p>
+                                    {/* <p>{stock.ticker}</p> */}
                                 </div>
-                            </Link>
                         ))}
                     </div>
                 }
@@ -124,10 +152,10 @@ function Header({ setLogState, userData = null }) {
                 </div>
             </div>
             {
-                location.pathname == "/"?
-                <div className='bg-[#111] w-full h-32 fixed top-0 z-[1000]'></div>
-                :
-                null
+                location.pathname == "/" ?
+                    <div className='bg-[#111] w-full h-32 fixed top-0 z-[1000]'></div>
+                    :
+                    null
             }
 
         </>

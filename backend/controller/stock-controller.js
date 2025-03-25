@@ -1,12 +1,14 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
 
+import levenshtein from 'fast-levenshtein';
+
 const uri = "https://groww.in"
 
 export const getStocks = async (req, res) => {
     try {
         let companies = [];
-        let url = `${uri}/stocks/filter?page=0&size=${Math.floor(Math.random() * 10) + 50}&sortType=ASC`;
+        let url = `${uri}/stocks/filter?page=0&size=5000&sortType=ASC`;
 
         await axios.get(url, {
             headers: {
@@ -101,27 +103,66 @@ export const getStockData = async (req, res) => {
     }
 }
 
-// export const stockSearch=async(req,res)=>{
-//     let {query}=req.body
-//     try {
-//         let url=`${uri}/search?q=${query}`
+export const stockSearch = async (req, res) => {
+    // try {
+        console.log('searching')
+        let { query } = req.body;
+        console.log(query)
+        let companies = [];
+        let url = `${uri}/stocks/filter?size=5000`;
 
-//         await axios.get(url,{
-//             headers:{
-//                 'Cache-Control': 'no-cache',
-//                 Pragma: 'no-cache',
-//                 Expires: '0',
-//             }
-//         }).then((response)=>{
-//             const htmlString=response.data;
+        await axios.get(url, {
+            headers: {
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
+                Expires: '0',
+            },
+        })
+            .then((response) => {
+                const htmlString = response.data;
 
-//             const $=cheerio.load(htmlString);
-//             let info={};
+                const $ = cheerio.load(htmlString);
 
-            
-//         })
 
-//     } catch (error) {
-        
-//     }
-// }
+                // Iterate over each table row (`<tr>`) and extract the data.
+                $('tr').each((index, element) => {
+                    const companyName = $(element).find('.st76SymbolName').text().trim();
+                    const marketPrice = $(element).find('.st76CurrVal').text().trim();
+                    const priceChange = $(element).find('.bodySmallHeavy').text().trim();
+                    const closePrice = $(element).find('.contentPrimary.st76Pad16').first().text().trim();
+                    const marketCap = $(element).find('.contentPrimary.st76Pad16').last().text().trim();
+                    const companyLink = $(element).find('a').attr('href');
+
+                    // Ensure that all necessary fields are found before pushing to the result array
+                    if (companyName && marketPrice && priceChange && closePrice && marketCap) {
+                        companies.push({
+                            name: companyName,
+                            marketPrice: marketPrice,
+                            priceChange: priceChange,
+                            closePrice: closePrice,
+                            marketCap: marketCap,
+                            companyLink: companyLink,
+                        });
+                    }
+                });
+
+                console.log('hello')
+
+                let results = companies.map(company => ({
+                    name: company.name,
+                    companyLink:company.companyLink,
+                    distance: levenshtein.get(query.toLowerCase(), company.name.toLowerCase())
+                }));
+                console.log('hello2')
+
+                results.sort((a, b) => a.distance - b.distance);
+                console.log(results.slice(0,5))
+
+                return res.status(200).send(results.slice(0, 5));
+
+            })
+    // } catch (error) {
+
+    //     return res.status(500).json({ msg: "hello" })
+    // }
+}
