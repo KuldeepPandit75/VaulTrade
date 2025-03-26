@@ -88,13 +88,19 @@ export const getStockData = async (req, res) => {
 
                 info.companyName = $('body').find('.lpu38Head').text().trim();
                 info.marketPrice = $('body').find('.lpu38San').next().text();
-                info.priceChange = $('body').find('.bodySmallHeavy').text().trim();
-                info.closePrice = $('body').find('.contentPrimary.st76Pad16').first().text().trim();
-                info.marketCap = $("body").find('.contentPrimary.st76Pad16').last().text().trim();
                 info.companyLink = $('body').find('a').attr('href');
 
+                const fundamentals = {};
+                $("table.tb10Table tbody tr").each((index, element) => {
+                    const key = $(element).find(".ft785Head").text().trim();
+                    const value = $(element).find(".ft785Value").text().trim();
+                    if (key && value) {
+                        fundamentals[key] = value;
+                    }
+                });
 
-                return res.status(200).json(info);
+
+                return res.status(200).json({info,fundamentals});
 
             })
     } catch (error) {
@@ -103,66 +109,66 @@ export const getStockData = async (req, res) => {
     }
 }
 
-export const stockSearch = async (req, res) => {
-    // try {
-        console.log('searching')
-        let { query } = req.body;
-        console.log(query)
-        let companies = [];
-        let url = `${uri}/stocks/filter?size=5000`;
+// export const stockSearch = async (req, res) => {
+//     try {
+//     console.log('searching')
+//     let { query } = req.body;
+//     console.log(query)
+//     let companies = [];
+//     let url = `${uri}/stocks/filter?size=5000`;
 
-        await axios.get(url, {
-            headers: {
-                'Cache-Control': 'no-cache',
-                Pragma: 'no-cache',
-                Expires: '0',
-            },
-        })
-            .then((response) => {
-                const htmlString = response.data;
+//     await axios.get(url, {
+//         headers: {
+//             'Cache-Control': 'no-cache',
+//             Pragma: 'no-cache',
+//             Expires: '0',
+//         },
+//     })
+//         .then((response) => {
+//             const htmlString = response.data;
 
-                const $ = cheerio.load(htmlString);
+//             const $ = cheerio.load(htmlString);
 
 
-                // Iterate over each table row (`<tr>`) and extract the data.
-                $('tr').each((index, element) => {
-                    const companyName = $(element).find('.st76SymbolName').text().trim();
-                    const marketPrice = $(element).find('.st76CurrVal').text().trim();
-                    const priceChange = $(element).find('.bodySmallHeavy').text().trim();
-                    const closePrice = $(element).find('.contentPrimary.st76Pad16').first().text().trim();
-                    const marketCap = $(element).find('.contentPrimary.st76Pad16').last().text().trim();
-                    const companyLink = $(element).find('a').attr('href');
+//             // Iterate over each table row (`<tr>`) and extract the data.
+//             $('tr').each((index, element) => {
+//                 const companyName = $(element).find('.st76SymbolName').text().trim();
+//                 const marketPrice = $(element).find('.st76CurrVal').text().trim();
+//                 const priceChange = $(element).find('.bodySmallHeavy').text().trim();
+//                 const closePrice = $(element).find('.contentPrimary.st76Pad16').first().text().trim();
+//                 const marketCap = $(element).find('.contentPrimary.st76Pad16').last().text().trim();
+//                 const companyLink = $(element).find('a').attr('href');
 
-                    // Ensure that all necessary fields are found before pushing to the result array
-                    if (companyName && marketPrice && priceChange && closePrice && marketCap) {
-                        companies.push({
-                            name: companyName,
-                            marketPrice: marketPrice,
-                            priceChange: priceChange,
-                            closePrice: closePrice,
-                            marketCap: marketCap,
-                            companyLink: companyLink,
-                        });
-                    }
-                });
+//                 // Ensure that all necessary fields are found before pushing to the result array
+//                 if (companyName && marketPrice && priceChange && closePrice && marketCap) {
+//                     companies.push({
+//                         name: companyName,
+//                         marketPrice: marketPrice,
+//                         priceChange: priceChange,
+//                         closePrice: closePrice,
+//                         marketCap: marketCap,
+//                         companyLink: companyLink,
+//                     });
+//                 }
+//             });
 
-                console.log('hello')
+//             console.log('hello')
 
-                let results = companies.map(company => ({
-                    name: company.name,
-                    companyLink:company.companyLink,
-                    distance: levenshtein.get(query.toLowerCase(), company.name.toLowerCase())
-                }));
-                console.log('hello2')
+//             let results = companies.map(company => ({
+//                 name: company.name,
+//                 companyLink: company.companyLink,
+//                 distance: levenshtein.get(query.toLowerCase(), company.name.toLowerCase())
+//             }));
+//             console.log('hello2')
 
-                results.sort((a, b) => a.distance - b.distance);
-                console.log(results.slice(0,5))
+//             results.sort((a, b) => a.distance - b.distance);
+//             console.log(results.slice(0, 5))
 
-                return res.status(200).send(results.slice(0, 5));
+//             return res.status(200).send(results.slice(0, 5));
 
-            })
-    // } catch (error) {
+//         })
+//     } catch (error) {
 
-    //     return res.status(500).json({ msg: "hello" })
-    // }
-}
+//         return res.status(500).json({ msg: "hello" })
+//     }
+// }

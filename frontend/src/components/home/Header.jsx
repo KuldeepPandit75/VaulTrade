@@ -39,15 +39,15 @@ function Header({ setLogState, userData = null }) {
 
     const handleKeyDown = async(e) => {
         if (e.key == "Enter") {
-            let results = stocksData.map(stock => ({
+            let results = stocksData?.map(stock => ({
                 name: stock.name,
                 companyLink: stock.companyLink,
                 distance: levenshtein.get(search.toLowerCase(), stock.name.toLowerCase())
             }));
     
-            results.sort((a, b) => a.distance - b.distance);
+            results?.sort((a, b) => a.distance - b.distance);
     
-            setStocks(results.slice(0,5))
+            setStocks(results?.slice(0,5))
         }
     }
 

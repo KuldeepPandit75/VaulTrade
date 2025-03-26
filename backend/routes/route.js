@@ -1,7 +1,7 @@
 import express from "express";
 import validateAccessToken from "../controller/auth-controller.js";
 import { addMoney, buyStock, createUser, getUserInfo, getUserInvestments, sellStock } from "../controller/user-controller.js";
-import { getStockData, getStocks, stockSearch } from "../controller/stock-controller.js";
+import { getStockData, getStocks } from "../controller/stock-controller.js";
 
 const router=express.Router();
 
@@ -13,6 +13,6 @@ router.post("/stock",validateAccessToken,getStockData);
 router.post("/buyStock",validateAccessToken,buyStock);
 router.post("/getUserInvestments",validateAccessToken,getUserInvestments);
 router.post("/sellStock",validateAccessToken,sellStock);
-router.post("/stockSearch",stockSearch)
+// router.post("/stockSearch",stockSearch)
 
 export default router;

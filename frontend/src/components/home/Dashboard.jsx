@@ -150,7 +150,7 @@ function Dashboard() {
                                                         {investment.stockName}
                                                         <p className='text-sm text-[rgba(255,255,255,0.4)]'>{investment.stockQuantity} share</p>
                                                     </th>
-                                                    <th>{stocks.map(stock => {
+                                                    <th>{stocks?.map(stock => {
                                                         if (stock.name == investment.stockName) {
                                                             return stock.marketPrice
                                                         }
