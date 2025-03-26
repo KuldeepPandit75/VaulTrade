@@ -7,6 +7,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Loader from '../loader/Loader.jsx';
 
 
 function Explore() {
@@ -69,6 +70,9 @@ function Explore() {
       );
     });
   }, [stocks]);
+
+  if(stocks==null)
+    return <Loader/>
 
   return (
     <div className='m-auto mt-10 flex flex-wrap justify-evenly'>

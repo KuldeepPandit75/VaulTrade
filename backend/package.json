@@ -18,6 +18,6 @@
     "express": "^4.21.2",
     "fast-levenshtein": "^3.0.0",
     "mongoose": "^8.9.2",
-    "puppeteer": "^24.1.0"
+    "puppeteer": "^24.4.0"
   }
 }

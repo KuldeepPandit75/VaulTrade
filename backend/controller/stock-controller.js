@@ -1,8 +1,7 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
-import { updateStockInDB } from '../updater/stockUpdater.js';
-
-import levenshtein from 'fast-levenshtein';
+import Stock from '../models/stocks.js';
+import puppeteer from 'puppeteer'
 
 const uri = "https://groww.in"
 
@@ -61,115 +60,71 @@ export const getStocks = async (req, res) => {
 export const getStockData = async (req, res) => {
     const { link } = req.body
     try {
-        let url = `${uri}${link}`;
+        console.log('sdaf')
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.goto(`${uri}${link}`, { waitUntil: "networkidle2" });
 
-        await axios.get(url, {
-            headers: {
-                'Cache-Control': 'no-cache',
-                Pragma: 'no-cache',
-                Expires: '0',
-            },
-        })
-            .then((response) => {
-                const htmlString = response.data;
+        const html = await page.evaluate(() => document.documentElement.outerHTML);
 
-                const $ = cheerio.load(htmlString);
-                let info = {};
+        await browser.close();
 
-                $('noscript').each((index1, element1) => {
-                    if (index1 != 0) {
+        const $ = cheerio.load(html);
 
-                        const $2 = cheerio.load(element1.children[0].data);
-                        $2('img').each((idx, ele) => {
-                            info.logo = ele.attribs.src;
-                        })
-                    }
+        // Extract Stock Name
+        const stockName = $(".lpu38Head.truncate.displaySmall").text().trim();
 
-                })
+        // Extract Stock Price
+        const stockPrice = $(".lpu38Pri.valign-wrapper.false.displayBase").text().trim();
 
-                info.companyName = $('body').find('.lpu38Head').text().trim();
-                info.marketPrice = $('body').find('.lpu38San').next().text();
-                info.companyLink = $('body').find('a').attr('href');
+        // Extract Price Change
+        const priceChange = $(".lpu38Day.bodyBaseHeavy").text().trim();
 
-                const fundamentals = {};
-                $("table.tb10Table tbody tr").each((index, element) => {
-                    const key = $(element).find(".ft785Head").text().trim();
-                    const value = $(element).find(".ft785Value").text().trim();
-                    if (key && value) {
-                        fundamentals[key] = value;
-                    }
-                });
+        // Extract Stock Image URL
+        const stockImage = $(".companyLogo_companyImage__bT0On").attr("src");
+
+        const fundamentals = {};
+        $("table.tb10Table tbody tr").each((index, element) => {
+            const key = $(element).find(".ft785Head").text().trim();
+            const value = $(element).find(".ft785Value").text().trim();
+            if (key && value) {
+                fundamentals[key] = value;
+            }
+        });
+
+        // Print extracted data
+        const result={
+            stockName,
+            stockPrice,
+            priceChange,
+            stockImage,
+            companyLink:link,
+            fundamentals
+        };
+
+        return res.status(200).send(result);
 
 
-                return res.status(200).json({info,fundamentals});
-
-            })
     } catch (error) {
-
-        return res.status(500).json({ msg: "error getting stocks data" })
+        console.log(error.message)
+        return res.status(500).json({ msg: error.message })
     }
 }
 
-// export const stockSearch = async (req, res) => {
-//     try {
-//     console.log('searching')
-//     let { query } = req.body;
-//     console.log(query)
-//     let companies = [];
-//     let url = `${uri}/stocks/filter?size=5000`;
+export const stockSearch = async (req, res) => {
+    try {
+        console.log('searching')
+        let { query } = req.body;
+        console.log(query)
 
-//     await axios.get(url, {
-//         headers: {
-//             'Cache-Control': 'no-cache',
-//             Pragma: 'no-cache',
-//             Expires: '0',
-//         },
-//     })
-//         .then((response) => {
-//             const htmlString = response.data;
+        const regex = new RegExp(query, "i"); // Case-insensitive
 
-//             const $ = cheerio.load(htmlString);
+        const result = await Stock.find({ name: { $regex: regex } });
 
+        res.status(200).send(result)
 
-//             // Iterate over each table row (`<tr>`) and extract the data.
-//             $('tr').each((index, element) => {
-//                 const companyName = $(element).find('.st76SymbolName').text().trim();
-//                 const marketPrice = $(element).find('.st76CurrVal').text().trim();
-//                 const priceChange = $(element).find('.bodySmallHeavy').text().trim();
-//                 const closePrice = $(element).find('.contentPrimary.st76Pad16').first().text().trim();
-//                 const marketCap = $(element).find('.contentPrimary.st76Pad16').last().text().trim();
-//                 const companyLink = $(element).find('a').attr('href');
+    } catch (error) {
 
-//                 // Ensure that all necessary fields are found before pushing to the result array
-//                 if (companyName && marketPrice && priceChange && closePrice && marketCap) {
-//                     companies.push({
-//                         name: companyName,
-//                         marketPrice: marketPrice,
-//                         priceChange: priceChange,
-//                         closePrice: closePrice,
-//                         marketCap: marketCap,
-//                         companyLink: companyLink,
-//                     });
-//                 }
-//             });
-
-//             console.log('hello')
-
-//             let results = companies.map(company => ({
-//                 name: company.name,
-//                 companyLink: company.companyLink,
-//                 distance: levenshtein.get(query.toLowerCase(), company.name.toLowerCase())
-//             }));
-//             console.log('hello2')
-
-//             results.sort((a, b) => a.distance - b.distance);
-//             console.log(results.slice(0, 5))
-
-//             return res.status(200).send(results.slice(0, 5));
-
-//         })
-//     } catch (error) {
-
-//         return res.status(500).json({ msg: "hello" })
-//     }
-// }
+        return res.status(500).json({ msg: "hello" })
+    }
+}

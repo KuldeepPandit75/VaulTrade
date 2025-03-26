@@ -5,6 +5,10 @@ const InvestmentSchema= new mongoose.Schema({
         type:String,
         required:true
     },
+    companyLink:{
+        type:String,
+        required:true
+    },
     stockName:{
         type:String,
         required:true

@@ -1,4 +1,4 @@
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import Header from "./components/home/Header";
@@ -12,6 +12,7 @@ function Layout() {
   const data = useSelector(state => state.user);
   const notifications = useSelector(state => state.notifications)
   const dispatch=useDispatch();
+  const navigate=useNavigate();
 
   useEffect(() => {
     setUserData(data);
@@ -29,10 +30,8 @@ function Layout() {
 
   }, [])
 
-  if (userData == null)
-    return (<Loader />);
-
   return (
+    
     <>
       <Header userData={userData} />
       <Outlet />

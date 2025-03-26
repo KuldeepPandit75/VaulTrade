@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setNotification, setUser } from '../../features/slice.js';
 
 
-function StockDet({ price, stock}) {
+function StockDet({stock}) {
     const [tab, setTab] = useState("buy");
     const [qty, setQty] = useState("");
     const [sellQty, setSellQty] = useState("");
@@ -65,10 +65,10 @@ function StockDet({ price, stock}) {
 
     useEffect(() => {
 
-        if (Number(qty * price) > Number(userData?.balance.$numberDecimal)) {
+        if (Number(qty * Number(stock?.stockPrice.slice(1))) > Number(userData?.balance.$numberDecimal)) {
             setExceeding(true);
         }
-        if (Number(qty * price) < Number(userData?.balance.$numberDecimal)) {
+        if (Number(qty * Number(stock?.stockPrice.slice(1))) < Number(userData?.balance.$numberDecimal)) {
             setExceeding(false);
         }
     }, [qty])
@@ -77,11 +77,14 @@ function StockDet({ price, stock}) {
 
         if (qty != 0 && qty != null) {
 
+            console.log(stock)
+
             const reqData = {
-                buyPrice: price,
-                stockName: stock?.companyName,
+                buyPrice: Number(stock?.stockPrice.slice(1)),
+                stockName: stock?.stockName,
                 stockQuantity: qty,
                 email: userData.email,
+                companyLink:stock?.companyLink
             }
 
             const response = await API.buyStock(reqData)
@@ -111,8 +114,8 @@ function StockDet({ price, stock}) {
                 const reqData = {
                     email: userData.email,
                     sellQty: sellQty,
-                    sellPrice: price,
-                    stockName: stock?.companyName
+                    sellPrice: Number(stock?.stockPrice.slice(1)),
+                    stockName: stock?.stockName
                 }
 
                 const response = await API.sellStock(reqData);
@@ -147,22 +150,23 @@ function StockDet({ price, stock}) {
 
     }, [userData])
 
-    useEffect(() => {
-        if (stocksData && data) {
-            for (const ele of stocksData) {
-                if (data.link == ele.companyLink) {
-                    setDiff(ele.priceChange)
-                }
-            }
-        }
-    }, [stocksData])
+
+    // useEffect(() => {
+    //     if (stocksData && data) {
+    //         for (const ele of stocksData) {
+    //             if (data.link == ele.companyLink) {
+    //                 setDiff(ele.priceChange)
+    //             }
+    //         }
+    //     }
+    // }, [stocksData])
 
     return (
         <>
             <div className='border-[1px] border-[rgba(255,255,255,0.2)] flex-1 mx-32 mt-20 mb-20 rounded-xl text-white h-[500px] flex flex-col sticky top-10'>
                 <div className='heading px-5 border-b-inherit border-b-[1px] py-3'>
-                    <h1 className='font-bold'>{stock?.companyName}</h1>
-                    <h2 className='text-[rgba(255,255,255,0.5)] text-sm'>NSE ₹{price} ({diff.split("(")[1]}</h2>
+                    <h1 className='font-bold'>{stock?.stockName}</h1>
+                    <h2 className='text-[rgba(255,255,255,0.5)] text-sm'>NSE ₹{Number(stock?.stockPrice.slice(1))} ( {stock?.priceChange.slice(0,-2)})</h2>
                 </div>
                 <div className='border-b-[1px] h-10 border-b-inherit flex text-white mt-4'>
                     <p className={`${tab == 'buy' ? "border-b-[5px] border-b-green text-green" : ""} text-xl font-semibold mx-2 px-4 cursor-pointer`} onClick={() => handleTabClick()}>Buy</p>
@@ -177,21 +181,21 @@ function StockDet({ price, stock}) {
                             </div>
                             <div className='border-inherit flex justify-between px-5 items-center'>
                                 <p>Price</p>
-                                <input placeholder='' type='number' className='bg-transparent border-[1px] border-inherit no-spinner text-right rounded-[5px] leading-8 px-2' readOnly value={price} />
+                                <input placeholder='' type='number' className='bg-transparent border-[1px] border-inherit no-spinner text-right rounded-[5px] leading-8 px-2' readOnly value={Number(stock?.stockPrice.slice(1))} />
                             </div>
                         </div>
                         <div className='text-center h-1/3 flex flex-col justify-evenly items-center border-inherit'>
                             {
                                 !exceeding
                                     ?
-                                    <p className='opacity-40 text-sm'>Order will be executed at {price} or lower price</p>
+                                    <p className='opacity-40 text-sm'>Order will be executed at {Number(stock?.stockPrice.slice(1))} or lower price</p>
                                     :
-                                    <p className='bg-[#443921] rounded-sm px-2 py-1 mb-2'>Available amount is enough for {Math.floor(userData?.balance.$numberDecimal / price)} shares</p>
+                                    <p className='bg-[#443921] rounded-sm px-2 py-1 mb-2'>Available amount is enough for {Math.floor(userData?.balance.$numberDecimal / Number(stock?.stockPrice.slice(1)))} shares</p>
                             }
                             <hr className='border-inherit border-[1px] w-full' />
                             <div className='flex justify-between w-full px-5 mt-2'>
                                 <p className='opacity-40 text-sm'>Balance: ₹{parseFloat(userData?.balance.$numberDecimal).toFixed(2)}</p>
-                                <p className='opacity-40 text-sm'>Approx Req. : ₹{(qty * price).toFixed(2)}</p>
+                                <p className='opacity-40 text-sm'>Approx Req. : ₹{(qty * Number(stock?.stockPrice.slice(1))).toFixed(2)}</p>
                             </div>
                             {
                                 !exceeding
@@ -199,7 +203,7 @@ function StockDet({ price, stock}) {
                                     <button className='bg-green w-[80%] scale-[0.99] rounded-lg h-[40px] text-xl font-bold hover:bg-[#449072] hover:scale-[1] transition-all my-3' onClick={handleBuyBtn}>Buy</button>
                                     :
                                     <div className='flex justify-between px-10 w-full my-3'>
-                                        <button className='border-inherit border-[1px] rounded-lg px-3 py-1'>Buy {Math.floor(userData?.balance.$numberDecimal / price)} shares</button>
+                                        <button className='border-inherit border-[1px] rounded-lg px-3 py-1'>Buy {Math.floor(userData?.balance.$numberDecimal / Number(stock?.stockPrice.slice(1)))} shares</button>
                                         <button className='bg-green px-3 py-1 rounded-lg' onClick={() => { navigate("/wallet") }}>Add Money</button>
                                     </div>
 
@@ -216,12 +220,12 @@ function StockDet({ price, stock}) {
                             </div>
                             <div className='border-inherit flex justify-between px-5 items-center'>
                                 <p>Price</p>
-                                <input placeholder='' type='number' className='bg-transparent border-[1px] border-inherit no-spinner text-right rounded-[5px] leading-8 px-2' readOnly value={price} />
+                                <input placeholder='' type='number' className='bg-transparent border-[1px] border-inherit no-spinner text-right rounded-[5px] leading-8 px-2' readOnly value={Number(stock?.stockPrice.slice(1))} />
                             </div>
                         </div>
                         <div className='text-center h-1/3 flex flex-col justify-evenly items-center border-inherit'>
                             {!sellStockStatus ?
-                                <p className='opacity-40 text-sm'>Order will be executed at {price} or higher price</p>
+                                <p className='opacity-40 text-sm'>Order will be executed at {Number(stock?.stockPrice.slice(1))} or higher price</p>
                                 :
                                 <p>{sellStockStatus}</p>
                             }

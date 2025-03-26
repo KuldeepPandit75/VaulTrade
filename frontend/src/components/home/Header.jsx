@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import { setStock, setSymbol } from '../../features/slice';
 import { useDispatch, useSelector } from 'react-redux';
 import levenshtein from 'fast-levenshtein';
+import { API } from '../../service/api';
 
 
 function Header({ setLogState, userData = null }) {
@@ -39,15 +40,13 @@ function Header({ setLogState, userData = null }) {
 
     const handleKeyDown = async(e) => {
         if (e.key == "Enter") {
-            let results = stocksData?.map(stock => ({
-                name: stock.name,
-                companyLink: stock.companyLink,
-                distance: levenshtein.get(search.toLowerCase(), stock.name.toLowerCase())
-            }));
+            
+            const response= await API.stockSearch({query:search})
+
+            if(response.isSuccess){
+                setStocks(response.data?.slice(0,5))
+            }
     
-            results?.sort((a, b) => a.distance - b.distance);
-    
-            setStocks(results?.slice(0,5))
         }
     }
 

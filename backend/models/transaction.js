@@ -16,6 +16,9 @@ const TransactionSchema= new mongoose.Schema({
     categ:{
         type:String,
         required:true
+    },
+    companyLink:{
+        type:String,
     }
 })
 

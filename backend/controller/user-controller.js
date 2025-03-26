@@ -62,7 +62,7 @@ export const addMoney=async(req,res)=>{
             email,
             amount:addAmount,
             dateTime: new Date(),
-            categ: "addMoney"
+            categ: "addMoney",
         })
 
         await newTransaction.save()
@@ -75,7 +75,8 @@ export const addMoney=async(req,res)=>{
 
 export const buyStock=async(req,res)=>{
     try {
-        const {email,stockName,buyPrice,stockQuantity}=req.body;
+        const {email,stockName,buyPrice,stockQuantity,companyLink}=req.body;
+        console.log(companyLink,email,stockName,buyPrice)
 
         const exists=await Investment.findOne({email,stockName});
 
@@ -99,7 +100,8 @@ export const buyStock=async(req,res)=>{
                 buyPrice,
                 stockName,
                 stockQuantity,
-                dateTime: new Date()
+                dateTime: new Date(),
+                companyLink,
             })
     
             await newInvestment.save();
@@ -108,7 +110,8 @@ export const buyStock=async(req,res)=>{
                 email,
                 amount:buyPrice,
                 dateTime: new Date(),
-                categ: "stockBuy"
+                categ: "stockBuy",
+                companyLink
             })
     
             const user=await User.find({email});
@@ -128,7 +131,7 @@ export const buyStock=async(req,res)=>{
         }
 
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
         return res.status(500).json({message:error.message})
     }
 }
