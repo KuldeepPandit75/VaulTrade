@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
+import { updateStockInDB } from '../updater/stockUpdater.js';
 
 import levenshtein from 'fast-levenshtein';
 
@@ -8,7 +9,7 @@ const uri = "https://groww.in"
 export const getStocks = async (req, res) => {
     try {
         let companies = [];
-        let url = `${uri}/stocks/filter?page=0&size=5000&sortType=ASC`;
+        let url = `${uri}/stocks/filter?page=0&size=${Math.floor(Math.random() * 10) + 50}&sortType=ASC`;
 
         await axios.get(url, {
             headers: {
