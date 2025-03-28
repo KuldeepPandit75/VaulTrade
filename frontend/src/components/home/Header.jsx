@@ -72,12 +72,15 @@ function Header({ setLogState, userData = null }) {
     }, [])
 
     const openStock = async (stock) => {
-        dispatch(setStock({
+    
+        const selectedStockInfo = {
           link: stock.companyLink,
           name: stock.name
+        }
     
-        }));
-        navigate("/stock");
+        dispatch(setStock(selectedStockInfo));
+        localStorage.setItem('selectedStock',JSON.stringify(selectedStockInfo))
+        navigate(`/stock`);
         console.log("stock opened");
     
         fetch(`${import.meta.env.VITE_BOT_URL}/predictu`, {
@@ -97,7 +100,7 @@ function Header({ setLogState, userData = null }) {
 
     return (
         <>
-            <div className={`flex justify-between items-center px-24 pt-4 sticky top-0 ${location.pathname == "/" ? "bg-[#111]" : ""}  z-[10000]`}>
+            <div className={`flex justify-between items-center px-24 pt-4 ${location.pathname == "/" ? "bg-[#111]" : ""}  z-[10000]`}>
                 <div className='logo flex items-center text-[1.5rem] cursor-pointer' onClick={goHome}>
                     <img src='/Asset 1.svg' className='h-[40px] px-4 py-2 box-content' />
                     <h2 className='text-white ml-3 font-extrabold'>VaulTrade</h2>
@@ -150,12 +153,6 @@ function Header({ setLogState, userData = null }) {
                     }
                 </div>
             </div>
-            {
-                location.pathname == "/" ?
-                    <div className='bg-[#111] w-full h-32 fixed top-0 z-[1000]'></div>
-                    :
-                    null
-            }
 
         </>
     )

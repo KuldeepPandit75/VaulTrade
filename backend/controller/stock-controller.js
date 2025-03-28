@@ -8,7 +8,7 @@ const uri = "https://groww.in"
 export const getStocks = async (req, res) => {
     try {
         let companies = [];
-        let url = `${uri}/stocks/filter?page=0&size=${Math.floor(Math.random() * 10) + 50}&sortType=ASC`;
+        let url = `${uri}/stocks/filter?page=0&size=${Math.floor(Math.random() * 1000) + 50}&sortType=ASC`;
 
         await axios.get(url, {
             headers: {
@@ -45,7 +45,7 @@ export const getStocks = async (req, res) => {
                     }
                 });
 
-                return res.status(200).send(companies);
+                return res.status(200).send(companies.slice(0,50));
 
             })
     } catch (error) {
@@ -60,56 +60,55 @@ export const getStocks = async (req, res) => {
 export const getStockData = async (req, res) => {
     const { link } = req.body
     try {
-        console.log('sdaf')
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.goto(`${uri}${link}`, { waitUntil: "networkidle2" });
+        let url = `${uri}${link}`;
 
-        const html = await page.evaluate(() => document.documentElement.outerHTML);
+        await axios.get(url, {
+            headers: {
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
+                Expires: '0',
+            },
+        })
+            .then((response) => {
+                const htmlString = response.data;
 
-        await browser.close();
+                const $ = cheerio.load(htmlString);
+                let info = {};
 
-        const $ = cheerio.load(html);
+                $('noscript').each((index1, element1) => {
+                    if (index1 != 0) {
 
-        // Extract Stock Name
-        const stockName = $(".lpu38Head.truncate.displaySmall").text().trim();
+                        const $2 = cheerio.load(element1.children[0].data);
+                        $2('img').each((idx, ele) => {
+                            info.logo = ele.attribs.src;
+                        })
+                    }
 
-        // Extract Stock Price
-        const stockPrice = $(".lpu38Pri.valign-wrapper.false.displayBase").text().trim();
+                })
 
-        // Extract Price Change
-        const priceChange = $(".lpu38Day.bodyBaseHeavy").text().trim();
+                info.companyName = $('body').find('.lpu38Head').text().trim();
+                info.marketPrice = $('body').find('.lpu38San').next().text();
+                info.companyLink = $('body').find('a').attr('href');
 
-        // Extract Stock Image URL
-        const stockImage = $(".companyLogo_companyImage__bT0On").attr("src");
-
-        const fundamentals = {};
-        $("table.tb10Table tbody tr").each((index, element) => {
-            const key = $(element).find(".ft785Head").text().trim();
-            const value = $(element).find(".ft785Value").text().trim();
-            if (key && value) {
-                fundamentals[key] = value;
-            }
-        });
-
-        // Print extracted data
-        const result={
-            stockName,
-            stockPrice,
-            priceChange,
-            stockImage,
-            companyLink:link,
-            fundamentals
-        };
-
-        return res.status(200).send(result);
+                const fundamentals = {};
+                $("table.tb10Table tbody tr").each((index, element) => {
+                    const key = $(element).find(".ft785Head").text().trim();
+                    const value = $(element).find(".ft785Value").text().trim();
+                    if (key && value) {
+                        fundamentals[key] = value;
+                    }
+                });
 
 
+                return res.status(200).json({info,fundamentals});
+
+            })
     } catch (error) {
-        console.log(error.message)
-        return res.status(500).json({ msg: error.message })
+
+        return res.status(500).json({ msg: "error getting stocks data" })
     }
 }
+
 
 export const stockSearch = async (req, res) => {
     try {

@@ -39,7 +39,7 @@ const StockChart = ({ name }) => {
                             'X-RapidAPI-Host': 'apidojo-yahoo-finance-v1.p.rapidapi.com',
                         },
                     });
-
+                    
                     const data = response.data.chart.result[0];
                     const dates = data.timestamp.map(timestamp => new Date(timestamp * 1000).toLocaleString());
                     const prices = data.indicators.quote[0].close;

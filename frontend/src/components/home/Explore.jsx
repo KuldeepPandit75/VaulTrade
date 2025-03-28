@@ -17,21 +17,24 @@ function Explore() {
   const [stocks, setStocks] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const stocksData=useSelector(state=>state.stocks)
+  const stocksData = useSelector(state => state.stocks)
 
-  useEffect(()=>{
-    if(stocksData){
+  useEffect(() => {
+    if (stocksData) {
       setStocks(stocksData)
     }
-  },[stocksData])
+  }, [stocksData])
 
   const openStock = async (stock) => {
-    dispatch(setStock({
+
+    const selectedStockInfo = {
       link: stock.companyLink,
       name: stock.name
+    }
 
-    }));
-    navigate("/stock");
+    dispatch(setStock(selectedStockInfo));
+    localStorage.setItem('selectedStock',JSON.stringify(selectedStockInfo))
+    navigate(`/stock`);
     console.log("stock opened");
 
     fetch(`${import.meta.env.VITE_BOT_URL}/predictu`, {
@@ -49,35 +52,35 @@ function Explore() {
 
   };
 
-  
 
-  useGSAP(() => {
-    gsap.utils.toArray(".stockCard").forEach((card) => {
-      gsap.fromTo(
-        card,
-        { opacity: 0, scale: 0.8 }, // Initial state (before scrolling)
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 95%", // Animation starts when the card enters viewport
-            toggleActions: "play none none reverse", // Plays only once
-          },
-        }
-      );
-    });
-  }, [stocks]);
 
-  if(stocks==null)
-    return <Loader/>
+  // useGSAP(() => {
+  //   gsap.utils.toArray(".stockCard").forEach((card) => {
+  //     gsap.fromTo(
+  //       card,
+  //       { opacity: 0, scale: 0.8 }, // Initial state (before scrolling)
+  //       {
+  //         opacity: 1,
+  //         scale: 1,
+  //         duration: 0.6,
+  //         ease: "power2.out",
+  //         scrollTrigger: {
+  //           trigger: card,
+  //           start: "top 95%", // Animation starts when the card enters viewport
+  //           toggleActions: "play none none reverse", // Plays only once
+  //         },
+  //       }
+  //     );
+  //   });
+  // }, [stocks]);
+
+  if (stocks == null)
+    return <Loader />
 
   return (
     <div className='m-auto mt-10 flex flex-wrap justify-evenly'>
       {stocks &&
-        stocks.slice(0,50).map((stock, idx) => (
+        stocks.slice(0, 50).map((stock, idx) => (
           <div onClick={() => openStock(stock)} key={idx}>
             <StockCard stock={stock} />
           </div>

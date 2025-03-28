@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Explore from './Explore'
 import Dashboard from './Dashboard'
-import Notification from '../Notification/Notification'
 
 
 function Home() {

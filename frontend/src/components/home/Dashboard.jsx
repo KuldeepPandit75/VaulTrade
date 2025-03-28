@@ -12,11 +12,12 @@ function Dashboard() {
     const [currVal, setCurrVal] = useState(0);
     const stocks = useSelector(state => state.stocks);
     const [selectedStock, setSelectedStock] = useState(null);
-    const [stockInfo, setStockInfo] = useState([]);
     const [userData, setUserData] = useState(null);
-    const dispatch = useDispatch();
+    const dispatch=useDispatch();
 
     let data = useSelector(state => state.user)
+
+    console.log(data)
 
     const stockTrend = (investment) => {
         for (let stock of stocks) {
@@ -87,46 +88,20 @@ function Dashboard() {
         }
     }, [data])
 
-    const handleStockClick = (selectStock) => {
-        console.log(selectStock.companyLink)
-        const fetchData = async () => {
-            const response = await API.getStockData({ link: selectStock.companyLink });
-            if (response.isSuccess) {
-                console.log(response.data)
-                setSelectedStock(response.data);
-            } else {
-                console.log(response.data);
-
+    const handleStockClick=(selectStock)=>{
+        let matchStock;
+        
+        for (let stock of stocks){
+            if(stock.name==selectStock.stockName){
+                dispatch(setStock({
+                      link: stock.companyLink,
+                      name: stock.name
+                    }))
+                matchStock={...stock,companyName:stock.name};
             }
         }
-
-        fetchData();
+        setSelectedStock(matchStock);
     }
-
-    useEffect(() => {
-        if (investments) {
-            setStockInfo([])
-            for (let investment of investments) {
-                const fetchData = async () => {
-                    const response = await API.getStockData({ link: investment.companyLink });
-                    if (response.isSuccess) {
-                        let newData = response.data;
-                        console.log(newData)
-                        setStockInfo(prev => ([ ...prev, newData ]));
-                    } else {
-                        console.log("hello")
-                        console.log(response.data);
-
-                    }
-                }
-
-                fetchData();
-            }
-        }
-    }, [investments])
-
-    console.log(stockInfo)
-    console.log(investments)
 
     return (
         <div className='flex justify-between'>
@@ -139,7 +114,7 @@ function Dashboard() {
                                 <div className="box1 flex justify-between bg-[#1b1b1b] items-center p-5 border-b-[1px] border-[rgba(255,255,255,0.3)]">
                                     <div className="currVal text-white font-bold text-3xl">
                                         <ul>
-                                            <li>₹{investedVal}</li>
+                                            <li>₹{investedVal.toFixed(2)}</li>
                                             <li className='text-lg font-normal'>Current Value</li>
                                         </ul>
                                     </div>
@@ -148,11 +123,11 @@ function Dashboard() {
                                             <tbody>
                                                 <tr>
                                                     <th>Invested Value</th>
-                                                    <th>₹{investedVal}</th>
+                                                    <th>₹{investedVal.toFixed(2)}</th>
                                                 </tr>
                                                 <tr>
                                                     <th>Total Returns</th>
-                                                    <th className={currVal - investedVal < 0 ? "text-red" : "text-green"}>{(currVal - investedVal).toFixed(2)} ({((currVal - investedVal) / investedVal).toFixed(4)}%)</th>
+                                                    <th className={currVal - investedVal < 0 ? "text-red" : "text-green"}>{(currVal - investedVal).toFixed(2)} ({(((currVal - investedVal) / investedVal)*100).toFixed(2)}%)</th>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -170,15 +145,14 @@ function Dashboard() {
                                         </thead>
                                         <tbody>
                                             {investments.map((investment, idx) => (
-                                                <tr key={idx} onClick={() => handleStockClick(investment)} className='border-b-[1px] border-[rgba(255,255,255,0.3)] hover:bg-[#1b1b1b] hover:cursor-pointer'>
+                                                <tr key={idx} onClick={()=>handleStockClick(investment)} className='border-b-[1px] border-[rgba(255,255,255,0.3)] hover:bg-[#1b1b1b] hover:cursor-pointer'>
                                                     <th className='font-normal h-14'>
                                                         {investment.stockName}
                                                         <p className='text-sm text-[rgba(255,255,255,0.4)]'>{investment.stockQuantity} share</p>
                                                     </th>
-                                                    <th>{stockInfo?.map(stock => {
-                                                        
-                                                        if (stock.stockName == investment.stockName) {
-                                                            return stock.stockPrice;
+                                                    <th>{stocks?.map(stock => {
+                                                        if (stock.name == investment.stockName) {
+                                                            return stock.marketPrice
                                                         }
                                                     })}</th>
                                                     <th className={stockTrend(investment) == "loss" ? "text-red" : "text-green"}>
@@ -195,8 +169,8 @@ function Dashboard() {
                         </div>
                         {
                             selectedStock ?
-
-                                <StockDet stock={selectedStock} />
+                                
+                                <StockDet stock={selectedStock} price={Number(selectedStock.marketPrice.slice(1).split(",").join("")).toFixed(2)}/>
                                 :
                                 <div className="holdDet border-[rgba(255,255,255,0.3)] border-[1px] rounded-xl w-[25%] mx-auto h-[30rem] mt-24 content-center place-items-center text-[rgba(255,255,255,0.9)] relative">
                                     <img src='/Cursor.svg' width={200} />
@@ -205,7 +179,7 @@ function Dashboard() {
                                     <p className='opacity-60 text-sm absolute bottom-5 left-7'>Balance: ₹{parseFloat(userData?.balance.$numberDecimal).toFixed(2)}</p>
                                     <Link to='/wallet' className='text-white decoration-dotted underline absolute bottom-5 right-7 opacity-50'>Add Money</Link>
                                 </div>
-
+                                
 
                         }
                     </>

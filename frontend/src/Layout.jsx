@@ -10,7 +10,6 @@ import { setUniStocks } from "./features/slice";
 function Layout() {
   const [userData, setUserData] = useState(null);
   const data = useSelector(state => state.user);
-  const notifications = useSelector(state => state.notifications)
   const dispatch=useDispatch();
   const navigate=useNavigate();
 
@@ -25,7 +24,7 @@ function Layout() {
         dispatch(setUniStocks(response.data));
       }
     }
-    // setInterval(fetchStocks,4000);
+    setInterval(fetchStocks,4000);
     fetchStocks();
 
   }, [])
@@ -35,10 +34,7 @@ function Layout() {
     <>
       <Header userData={userData} />
       <Outlet />
-      {notifications.length != 0 && notifications.map((notification, idx) => (
-        <Notification key={idx} message={notification.noti} status={notification.notiType} />
-
-      ))}
+      
     </>
   )
 }

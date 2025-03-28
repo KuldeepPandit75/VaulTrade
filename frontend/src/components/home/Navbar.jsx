@@ -12,7 +12,7 @@ function Navbar({setTab,tab}) {
 
   return (
     <>
-        <div className='border-b-[1px] h-10 border-b-[rgba(255,255,255,0.3)] px-24 flex text-white mt-10 sticky z-[1000] top-[113px] bg-[#111]'>
+        <div className='border-b-[1px] h-10 border-b-[rgba(255,255,255,0.3)] px-24 flex text-white mt-10 bg-[#111]'>
             <p className={`${tab=='Explore'?"border-b-[5px] border-b-[#449682]":""} text-xl font-semibold mx-2 px-4 cursor-pointer`} onClick={()=>handleTabClick()}>Explore</p>
             <p className={`${tab=='Explore'?"":"border-b-[5px] border-b-[#449682]"} text-xl font-semibold mx-2 px-4 cursor-pointer`} onClick={()=>handleTabClick()}>Dashboard</p>
         </div>

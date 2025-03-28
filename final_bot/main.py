@@ -32,7 +32,7 @@ if chat_session is None:
 
         #VedicVerse Instruction
 
-        system_instruction="user will give u stock company name you just need to return the symbol of that company's stock used in yahoo finance api",
+        system_instruction="user will give u stock company name you just need to return the symbol of that company's stock used in yahoo finance api also be accurate ticker for tatasteel is TATASTEEL.NS",
     )
     chat_session = model.start_chat(history=[])
 
